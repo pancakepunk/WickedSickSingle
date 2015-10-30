@@ -1,0 +1,15 @@
+
+struct PixelInputType
+{
+  float4 position : SV_POSITION;
+  float4 color : COLOR;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 main(PixelInputType input) : SV_TARGET
+{
+  return input.color;//float4(input.color.xyz, (1 - drawScalar) * 0.95);
+
+}

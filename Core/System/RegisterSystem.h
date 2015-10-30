@@ -1,0 +1,7 @@
+RegisterSystem(Window)
+RegisterSystem(Graphics)
+RegisterSystem(Input)
+RegisterSystem(Physics)
+RegisterSystem(EventSystem)
+RegisterSystem(ObjectFactory)
+RegisterSystem(Editor)

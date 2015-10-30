@@ -1,0 +1,18 @@
+#include "../common/textureInput.fx"
+struct PixelInputType
+{
+  float4 color : COLOR;
+  float4 position : SV_POSITION;
+  float2 tex : TEXCOORD;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 sampleColor = textureArray[0].Sample(sampleType, input.tex);
+  sampleColor.w = 1;
+  return input.color * sampleColor;
+}

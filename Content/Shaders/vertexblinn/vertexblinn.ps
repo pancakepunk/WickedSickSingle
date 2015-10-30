@@ -1,0 +1,11 @@
+#include "../common/lightingHelpers.fx"
+#include "../common/inputtypes/vertexlightingpsinput.fx"
+
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 main(PixelInputType input) : SV_TARGET1
+{
+  float4 texColor = textureArray[0].Sample(sampleType, input.tex);
+  return input.color;
+}

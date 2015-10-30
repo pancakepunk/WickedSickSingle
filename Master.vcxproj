@@ -1,0 +1,437 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{55C5E3D1-AB38-4715-B965-B18380CB9D9B}</ProjectGuid>
+    <RootNamespace>Master</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir);Editor;EventSystem;Meta;Input;Window;Math;Testing;Utility;ObjectFactory;Core;Physics;Graphics;$(SolutionDir)Master;Master;$(SolutionDir)Externals;$(SolutionDir)common;F:\Program Files (x86)\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)anttweakbar\lib;$(ProjectDir)Lua\lib;F:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir);Editor;EventSystem;Meta;Input;Window;Math;Testing;Utility;ObjectFactory;Core;Physics;Graphics;$(SolutionDir)Master;Master;$(SolutionDir)Externals;$(SolutionDir)common;F:\Program Files (x86)\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_RELEASE;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)anttweakbar\lib;$(ProjectDir)Lua\lib;F:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\CorePrecompiled.cpp" />
+    <ClCompile Include="Core\Engine\Engine.cpp" />
+    <ClCompile Include="Core\GameObject\Component.cpp" />
+    <ClCompile Include="Core\GameObject\GameObject.cpp" />
+    <ClCompile Include="Core\GameObject\Transform.cpp" />
+    <ClCompile Include="Core\General\FrameController.cpp" />
+    <ClCompile Include="Core\System\System.cpp" />
+    <ClCompile Include="Debugging\DebugPrecompiled.cpp" />
+    <ClCompile Include="Debugging\DebugPrint.cpp" />
+    <ClCompile Include="Editor\EditorPrecompiled.cpp" />
+    <ClCompile Include="Editor\System\Editor.cpp" />
+    <ClCompile Include="Editor\TweakBarCallbacks.cpp" />
+    <ClCompile Include="EventSystem\EventSystemPrecompiled.cpp" />
+    <ClCompile Include="EventSystem\Event\Event.cpp" />
+    <ClCompile Include="EventSystem\Event\EventCallback.cpp" />
+    <ClCompile Include="EventSystem\Event\EventCallbackList.cpp" />
+    <ClCompile Include="EventSystem\System\EventSystem.cpp" />
+    <ClCompile Include="Graphics\API\DirectX.cpp" />
+    <ClCompile Include="Graphics\API\GraphicsAPI.cpp" />
+    <ClCompile Include="Graphics\Buffer\Buffer.cpp" />
+    <ClCompile Include="Graphics\Buffer\DxBuffer.cpp" />
+    <ClCompile Include="Graphics\Camera\Camera.cpp" />
+    <ClCompile Include="Graphics\Components\CameraComponent.cpp" />
+    <ClCompile Include="Graphics\Components\CameraController.cpp" />
+    <ClCompile Include="Graphics\Components\LightComponent.cpp" />
+    <ClCompile Include="Graphics\Components\ModelComponent.cpp" />
+    <ClCompile Include="Graphics\D3D\Device.cpp" />
+    <ClCompile Include="Graphics\D3D\SwapChain.cpp" />
+    <ClCompile Include="Graphics\D3D\WICTextureLoader.cpp" />
+    <ClCompile Include="Graphics\General\GraphicsOptions.cpp" />
+    <ClCompile Include="Graphics\General\GraphicsTypes.cpp" />
+    <ClCompile Include="Graphics\General\GraphicsUtility.cpp" />
+    <ClCompile Include="Graphics\GraphicsPrecompiled.cpp" />
+    <ClCompile Include="Graphics\Model\DxModel.cpp" />
+    <ClCompile Include="Graphics\Model\Loaders\BinLoader.cpp" />
+    <ClCompile Include="Graphics\Model\Loaders\ModelLoader.cpp" />
+    <ClCompile Include="Graphics\Model\Loaders\ObjLoader.cpp" />
+    <ClCompile Include="Graphics\Model\Model.cpp" />
+    <ClCompile Include="Graphics\Model\ModelInstance.cpp" />
+    <ClCompile Include="Graphics\Model\Renderable.cpp" />
+    <ClCompile Include="Graphics\Model\Vertex.cpp" />
+    <ClCompile Include="Graphics\Particles\Interpolator.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleDescription.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleManager.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleEmitter.cpp" />
+    <ClCompile Include="Graphics\SceneConstants.cpp" />
+    <ClCompile Include="Graphics\Shader\DxShader.cpp" />
+    <ClCompile Include="Graphics\Shader\ParamTypeInfo.cpp" />
+    <ClCompile Include="Graphics\Shader\Shader.cpp" />
+    <ClCompile Include="Graphics\Shader\ShaderCallbacks.cpp" />
+    <ClCompile Include="Graphics\System\Graphics.cpp" />
+    <ClCompile Include="Graphics\Texture\DxTexture.cpp" />
+    <ClCompile Include="Graphics\Texture\Texture.cpp" />
+    <ClCompile Include="Graphics\Utility\DebugGeometry.cpp" />
+    <ClCompile Include="Input\Handlers\InputBuffer.cpp" />
+    <ClCompile Include="Input\Handlers\InputHandler.cpp" />
+    <ClCompile Include="Input\InputPrecompiled.cpp" />
+    <ClCompile Include="Input\System\Input.cpp" />
+    <ClCompile Include="Logic\LogicPrecompiled.cpp" />
+    <ClCompile Include="Logic\Main.cpp" />
+    <ClCompile Include="Logic\MetaDefinitions.cpp" />
+    <ClCompile Include="Math\MathPrecompiled.cpp" />
+    <ClCompile Include="Math\MathUtility.cpp" />
+    <ClCompile Include="Math\Matrix\Matrix2.cpp" />
+    <ClCompile Include="Math\Matrix\Matrix3.cpp" />
+    <ClCompile Include="Math\Matrix\Matrix4.cpp" />
+    <ClCompile Include="Math\Vector\Vector2.cpp" />
+    <ClCompile Include="Math\Vector\Vector2i.cpp" />
+    <ClCompile Include="Math\Vector\Vector3.cpp" />
+    <ClCompile Include="Math\Vector\Vector3i.cpp" />
+    <ClCompile Include="Math\Vector\Vector4.cpp" />
+    <ClCompile Include="Math\Vector\Vector4i.cpp" />
+    <ClCompile Include="Meta\Constructor\Constructor.cpp" />
+    <ClInclude Include="Graphics\D3D\WICTextureLoader.h" />
+    <ClInclude Include="Graphics\Particles\Interpolator.h" />
+    <ClInclude Include="Graphics\Particles\ParticleDescription.h" />
+    <ClInclude Include="Graphics\Particles\ParticleEnums.h" />
+    <ClInclude Include="Graphics\Particles\ParticleManager.h" />
+    <ClInclude Include="Graphics\Particles\ParticleEmitter.h" />
+    <ClInclude Include="Meta\Constructor\ConstructorTemplate.cpp" />
+    <ClCompile Include="Meta\Definitions\ExternalTypes.cpp" />
+    <ClCompile Include="Meta\Definitions\Primitives.cpp" />
+    <ClCompile Include="Meta\Function\Function.cpp" />
+    <ClInclude Include="Meta\Function\FunctionTemplate.cpp" />
+    <ClInclude Include="Meta\Function\ReturnType.cpp" />
+    <ClCompile Include="Meta\Lua\LuaChangeList.cpp" />
+    <ClCompile Include="Meta\Lua\LuaManager.cpp" />
+    <ClCompile Include="Meta\Lua\LuaUserdata.cpp" />
+    <ClCompile Include="Meta\Lua\Script.cpp" />
+    <ClCompile Include="Meta\Lua\ScriptManager.cpp" />
+    <ClCompile Include="Meta\MetaPrecompiled.cpp" />
+    <ClCompile Include="Meta\Type\Member.cpp" />
+    <ClCompile Include="Meta\Type\Metadata.cpp" />
+    <ClCompile Include="Meta\Type\MetaManager.cpp" />
+    <ClCompile Include="Meta\Utility\IndirectionCount.cpp" />
+    <ClCompile Include="Meta\Utility\MetaUtility.cpp" />
+    <ClCompile Include="Meta\Variant\Variant.cpp" />
+    <ClCompile Include="ObjectFactory\Components\ComponentFactoryBase.cpp" />
+    <ClCompile Include="ObjectFactory\Components\ComponentManager.cpp" />
+    <ClCompile Include="ObjectFactory\General\ObjectFactoryUtility.cpp" />
+    <ClCompile Include="ObjectFactory\ObjectFactoryPrecompiled.cpp" />
+    <ClCompile Include="ObjectFactory\System\ObjectFactory.cpp" />
+    <ClCompile Include="Physics\AABB.cpp" />
+    <ClCompile Include="Physics\Architecture\Collider.cpp" />
+    <ClCompile Include="Physics\Architecture\Geometry.cpp" />
+    <ClCompile Include="Physics\Architecture\PhysicsMaterial.cpp" />
+    <ClCompile Include="Physics\Architecture\PhysicsMesh.cpp" />
+    <ClCompile Include="Physics\Architecture\PhysicsScene.cpp" />
+    <ClCompile Include="Physics\Architecture\RigidBody.cpp" />
+    <ClCompile Include="Physics\Components\OrbitComponent.cpp" />
+    <ClCompile Include="Physics\Components\PhysicsComponent.cpp" />
+    <ClCompile Include="Physics\MotionState.cpp" />
+    <ClCompile Include="Physics\PhysicsPrecompiled.cpp" />
+    <ClCompile Include="Physics\PhysicsUtil.cpp" />
+    <ClCompile Include="Physics\Resolution\Constraint.cpp" />
+    <ClCompile Include="Physics\Resolution\ConstraintList.cpp" />
+    <ClCompile Include="Physics\Resolution\Contact.cpp" />
+    <ClCompile Include="Physics\Resolution\ContactConstraint.cpp" />
+    <ClCompile Include="Physics\Resolution\ContactEdge.cpp" />
+    <ClCompile Include="Physics\Resolution\ContactManifold.cpp" />
+    <ClCompile Include="Physics\Resolution\PointConstraint.cpp" />
+    <ClCompile Include="Physics\System\Physics.cpp" />
+    <ClCompile Include="Testing\Tester.cpp" />
+    <ClCompile Include="Testing\TestingPrecompiled.cpp" />
+    <ClCompile Include="Testing\Tests\HashMapTests.cpp" />
+    <ClCompile Include="Testing\UnitTest.cpp" />
+    <ClCompile Include="Utility\FileUtility\FilePath.cpp" />
+    <ClCompile Include="Utility\MatrixStack.cpp" />
+    <ClCompile Include="Utility\RandomClass.cpp" />
+    <ClCompile Include="Utility\StringUtility.cpp" />
+    <ClCompile Include="Utility\SuperFastHash.cpp" />
+    <ClCompile Include="Utility\UtilityPrecompiled.cpp" />
+    <ClCompile Include="Window\General\WindowSettings.cpp" />
+    <ClCompile Include="Window\General\WindowUtility.cpp" />
+    <ClCompile Include="Window\System\Window.cpp" />
+    <ClCompile Include="Window\WindowPrecompiled.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\CoreInterface.h" />
+    <ClInclude Include="Core\CorePrecompiled.h" />
+    <ClInclude Include="Core\Engine\Engine.h" />
+    <ClInclude Include="Core\GameObject\Component.h" />
+    <ClInclude Include="Core\GameObject\ComponentTypes.h" />
+    <ClInclude Include="Core\GameObject\GameObject.h" />
+    <ClInclude Include="Core\GameObject\Transform.h" />
+    <ClInclude Include="Core\General\FrameController.h" />
+    <ClInclude Include="Core\System\RegisterSystem.h" />
+    <ClInclude Include="Core\System\System.h" />
+    <ClInclude Include="Core\System\SystemType.h" />
+    <ClInclude Include="Debugging\Asserts.h" />
+    <ClInclude Include="Debugging\DebugInterface.h" />
+    <ClInclude Include="Debugging\DebugPrecompiled.h" />
+    <ClInclude Include="Debugging\DebugPrint.h" />
+    <ClInclude Include="Editor\EditorInterface.h" />
+    <ClInclude Include="Editor\EditorPrecompiled.h" />
+    <ClInclude Include="Editor\System\Editor.h" />
+    <ClInclude Include="Editor\TweakBarCallbacks.h" />
+    <ClInclude Include="EventSystem\EventSystemInterface.h" />
+    <ClInclude Include="EventSystem\EventSystemPrecompiled.h" />
+    <ClInclude Include="EventSystem\Event\Event.h" />
+    <ClInclude Include="EventSystem\Event\EventCallback.h" />
+    <ClInclude Include="EventSystem\Event\EventCallbackList.h" />
+    <ClInclude Include="EventSystem\RegisterEventType.h" />
+    <ClInclude Include="EventSystem\System\EventSystem.h" />
+    <ClInclude Include="Graphics\API\APIType.h" />
+    <ClInclude Include="Graphics\API\DirectX.h" />
+    <ClInclude Include="Graphics\API\GraphicsAPI.h" />
+    <ClInclude Include="Graphics\BufferStructs.h" />
+    <ClInclude Include="Graphics\Buffer\Buffer.h" />
+    <ClInclude Include="Graphics\Buffer\DxBuffer.h" />
+    <ClInclude Include="Graphics\Camera\Camera.h" />
+    <ClInclude Include="Graphics\Components\CameraComponent.h" />
+    <ClInclude Include="Graphics\Components\CameraController.h" />
+    <ClInclude Include="Graphics\Components\LightComponent.h" />
+    <ClInclude Include="Graphics\Components\ModelComponent.h" />
+    <ClInclude Include="Graphics\D3D\Device.h" />
+    <ClInclude Include="Graphics\D3D\DXIncludes.h" />
+    <ClInclude Include="Graphics\D3D\SwapChain.h" />
+    <ClInclude Include="Graphics\DebugDraw\DebugDraw.h" />
+    <ClInclude Include="Graphics\General\GraphicsOptions.h" />
+    <ClInclude Include="Graphics\General\GraphicsTypes.h" />
+    <ClInclude Include="Graphics\General\GraphicsUtility.h" />
+    <ClInclude Include="Graphics\GraphicsInterface.h" />
+    <ClInclude Include="Graphics\GraphicsPrecompiled.h" />
+    <ClInclude Include="Graphics\ImguiIncludes.h" />
+    <ClInclude Include="Graphics\Model\DxModel.h" />
+    <ClInclude Include="Graphics\Model\Face.h" />
+    <ClInclude Include="Graphics\Model\Loaders\BinLoader.h" />
+    <ClInclude Include="Graphics\Model\Loaders\ModelLoader.h" />
+    <ClInclude Include="Graphics\Model\Loaders\ObjLoader.h" />
+    <ClInclude Include="Graphics\Model\Model.h" />
+    <ClInclude Include="Graphics\Model\ModelInstance.h" />
+    <ClInclude Include="Graphics\Model\Renderable.h" />
+    <ClInclude Include="Graphics\Model\Vertex.h" />
+    <ClInclude Include="Graphics\SceneConstants.h" />
+    <ClInclude Include="Graphics\Shader\DxShader.h" />
+    <ClInclude Include="Graphics\Shader\ParamTypeInfo.h" />
+    <ClInclude Include="Graphics\Shader\Shader.h" />
+    <ClInclude Include="Graphics\Shader\ShaderCallbacks.h" />
+    <ClInclude Include="Graphics\System\Graphics.h" />
+    <ClInclude Include="Graphics\Texture\DxTexture.h" />
+    <ClInclude Include="Graphics\Texture\Texture.h" />
+    <ClInclude Include="Graphics\Utility\DebugGeometry.h" />
+    <ClInclude Include="Input\Handlers\InputBuffer.h" />
+    <ClInclude Include="Input\Handlers\InputHandler.h" />
+    <ClInclude Include="Input\InputEnums.h" />
+    <ClInclude Include="Input\InputInterface.h" />
+    <ClInclude Include="Input\InputPrecompiled.h" />
+    <ClInclude Include="Input\System\Input.h" />
+    <ClInclude Include="Logic\ComponentList.h" />
+    <ClInclude Include="Logic\LogicPrecompiled.h" />
+    <ClInclude Include="Math\MathInterface.h" />
+    <ClInclude Include="Math\MathPrecompiled.h" />
+    <ClInclude Include="Math\MathUtility.h" />
+    <ClInclude Include="Math\Matrix\Matrix2.h" />
+    <ClInclude Include="Math\Matrix\Matrix3.h" />
+    <ClInclude Include="Math\Matrix\Matrix4.h" />
+    <ClInclude Include="Math\Vector\Vector2.h" />
+    <ClInclude Include="Math\Vector\Vector2i.h" />
+    <ClInclude Include="Math\Vector\Vector3.h" />
+    <ClInclude Include="Math\Vector\Vector3i.h" />
+    <ClInclude Include="Math\Vector\Vector4.h" />
+    <ClInclude Include="Math\Vector\Vector4i.h" />
+    <ClInclude Include="Meta\Constructor\Constructor.h" />
+    <ClInclude Include="Meta\Definitions\ExternalTypes.h" />
+    <ClInclude Include="Meta\Definitions\Primitives.h" />
+    <ClInclude Include="Meta\Function\Function.h" />
+    <ClInclude Include="Meta\Function\FunctionPointer.h" />
+    <ClInclude Include="Meta\Function\ReturnType.h" />
+    <ClInclude Include="Meta\Lua\LuaChangeList.h" />
+    <ClInclude Include="Meta\Lua\LuaIncludes.h" />
+    <ClInclude Include="Meta\Lua\LuaManager.h" />
+    <ClInclude Include="Meta\Lua\LuaUserdata.h" />
+    <ClInclude Include="Meta\Lua\Script.h" />
+    <ClInclude Include="Meta\Lua\ScriptManager.h" />
+    <ClInclude Include="Meta\MetaDLL.h" />
+    <ClInclude Include="Meta\MetaInterface.h" />
+    <ClInclude Include="Meta\MetaPrecompiled.h" />
+    <ClInclude Include="Meta\Type\Member.h" />
+    <ClInclude Include="Meta\Type\Metadata.h" />
+    <ClInclude Include="Meta\Type\MetaManager.h" />
+    <ClInclude Include="Meta\Type\MetaSingleton.h" />
+    <ClInclude Include="Meta\Utility\IndexSequence.h" />
+    <ClInclude Include="Meta\Utility\IndirectionCount.h" />
+    <ClInclude Include="Meta\Utility\MetaMacros.h" />
+    <ClInclude Include="Meta\Utility\MetaUtility.h" />
+    <ClInclude Include="Meta\Utility\SimplifyType.h" />
+    <ClInclude Include="Meta\Variant\Variant.h" />
+    <ClInclude Include="Meta\Variant\VariantTemplate.h" />
+    <ClInclude Include="ObjectFactory\Components\ComponentFactory.h" />
+    <ClInclude Include="ObjectFactory\Components\ComponentFactoryBase.h" />
+    <ClInclude Include="ObjectFactory\Components\ComponentManager.h" />
+    <ClInclude Include="ObjectFactory\General\ObjectFactoryUtility.h" />
+    <ClInclude Include="ObjectFactory\ObjectFactoryInterface.h" />
+    <ClInclude Include="ObjectFactory\ObjectFactoryPrecompiled.h" />
+    <ClInclude Include="ObjectFactory\System\ObjectFactory.h" />
+    <ClInclude Include="Physics\AABB.h" />
+    <ClInclude Include="Physics\Architecture\Collider.h" />
+    <ClInclude Include="Physics\Architecture\Geometry.h" />
+    <ClInclude Include="Physics\Architecture\PhysicsMaterial.h" />
+    <ClInclude Include="Physics\Architecture\PhysicsMesh.h" />
+    <ClInclude Include="Physics\Architecture\PhysicsScene.h" />
+    <ClInclude Include="Physics\Architecture\RigidBody.h" />
+    <ClInclude Include="Physics\Broadphase\BroadPhase.h" />
+    <ClInclude Include="Physics\Broadphase\DynamicAABB.h" />
+    <ClInclude Include="Physics\Components\OrbitComponent.h" />
+    <ClInclude Include="Physics\Components\PhysicsComponent.h" />
+    <ClInclude Include="Physics\MotionState.h" />
+    <ClInclude Include="Physics\PhysicsInterface.h" />
+    <ClInclude Include="Physics\PhysicsPrecompiled.h" />
+    <ClInclude Include="Physics\PhysicsUtil.h" />
+    <ClInclude Include="Physics\Resolution\Constraint.h" />
+    <ClInclude Include="Physics\Resolution\ConstraintList.h" />
+    <ClInclude Include="Physics\Resolution\Contact.h" />
+    <ClInclude Include="Physics\Resolution\ContactConstraint.h" />
+    <ClInclude Include="Physics\Resolution\ContactEdge.h" />
+    <ClInclude Include="Physics\Resolution\ContactManifold.h" />
+    <ClInclude Include="Physics\Resolution\PointConstraint.h" />
+    <ClInclude Include="Physics\System\Physics.h" />
+    <ClInclude Include="Testing\FailReasons.h" />
+    <ClInclude Include="Testing\Tester.h" />
+    <ClInclude Include="Testing\TestInfo.h" />
+    <ClInclude Include="Testing\TestingInterface.h" />
+    <ClInclude Include="Testing\TestingPrecompiled.h" />
+    <ClInclude Include="Testing\Tests\HashMapTests.h" />
+    <ClInclude Include="Testing\UnitTest.h" />
+    <ClInclude Include="Utility\ContainerUtility.h" />
+    <ClInclude Include="Utility\Factory\Archetype.h" />
+    <ClInclude Include="Utility\Factory\Factory.h" />
+    <ClInclude Include="Utility\FileUtility\FilePath.h" />
+    <ClInclude Include="Utility\HashMap.h" />
+    <ClInclude Include="Utility\MatrixStack.h" />
+    <ClInclude Include="Utility\MemoryManager\MemoryManager.h" />
+    <ClInclude Include="Utility\RandomClass.h" />
+    <ClInclude Include="Utility\StringUtility.h" />
+    <ClInclude Include="Utility\SuperFastHash.h" />
+    <ClInclude Include="Utility\UtilityInterface.h" />
+    <ClInclude Include="Utility\UtilityPrecompiled.h" />
+    <ClInclude Include="Window\General\WindowSettings.h" />
+    <ClInclude Include="Window\General\WindowType.h" />
+    <ClInclude Include="Window\General\WindowUtility.h" />
+    <ClInclude Include="Window\System\Window.h" />
+    <ClInclude Include="Window\WindowInterface.h" />
+    <ClInclude Include="Window\WindowPrecompiled.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
