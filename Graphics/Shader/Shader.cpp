@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "Shader.h"
 
@@ -15,11 +16,9 @@
 namespace WickedSick
 {
   Shader::Shader(const std::string& name,
-                 ShaderCallback callback,
-                 bool indexed)
+                 ShaderCallback callback)
   : name_(name),
-    callback_(callback),
-    indexed_(indexed)
+    callback_(callback)
   {
   
     files_[ShaderType::Vertex] = "Content/Shaders/" + name_ + "/" + name_ + ".vs";
@@ -88,11 +87,6 @@ namespace WickedSick
       it.Release();
     }
     ClearTextures();
-  }
-
-  void Shader::SetIndexed(bool index)
-  {
-    indexed_ = index;
   }
 
   void Shader::AddTexture(Texture * comp)

@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "Shader/ParamTypeInfo.h"
 #include "Debugging/DebugInterface.h"

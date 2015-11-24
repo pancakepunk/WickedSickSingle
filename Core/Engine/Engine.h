@@ -1,7 +1,7 @@
 #pragma once
 
 #include "System/System.h"
-#include <vector>
+//
 
 
 namespace WickedSick
@@ -27,7 +27,7 @@ namespace WickedSick
     System* GetSystem(SystemType type);
     std::vector<System*>& GetSystems();
 
-    static bool IsIniitialized()
+    static bool IsIniitialized()//
     {
       return initialized_;
     }

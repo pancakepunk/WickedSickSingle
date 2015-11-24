@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "LightComponent.h"
 #include "System/Graphics.h"

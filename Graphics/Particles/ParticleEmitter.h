@@ -10,6 +10,7 @@ namespace WickedSick
   class InterpolatorInterface;
   class Model;
   class Texture;
+  class ParticleSystem;
   struct EmitterDescription
   {
     std::string sourceModel;
@@ -31,7 +32,8 @@ namespace WickedSick
   {
   public:
     ParticleEmitter(size_t particleCount,
-                    const EmitterDescription& description);
+                    const EmitterDescription& description,
+                    ParticleSystem* base = nullptr);
     void Update(float dt);
 
     EmitterDescription& GetEmitterDescription();
@@ -44,6 +46,8 @@ namespace WickedSick
                           const ParticleDescription& variance = ParticleDescription());
     void ClearParticleStates();
     void RegisterAttribute(const std::string& memberName);
+
+    ParticleSystem* GetSystem();
 
     void Render();
     std::set<size_t>& GetAlive();
@@ -69,17 +73,10 @@ namespace WickedSick
 
     std::set<Reflection::Member*> members_to_interpolate_;
 
+    ParticleSystem* base_;
+
   };
 
-  class ParticleSystem
-  {
-  public:
-    ParticleSystem();
-    ~ParticleSystem();
-    void AddEmitter(const ParticleEmitter& particle);
-
-  private:
-    std::vector<ParticleEmitter> emitters_;
-  };
+  
   
 }

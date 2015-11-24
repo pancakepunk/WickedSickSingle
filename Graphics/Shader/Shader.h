@@ -20,8 +20,7 @@ namespace WickedSick
       typedef void (*ShaderCallback)(Graphics*, void*, std::vector<ParamPasser>&);
 
       Shader(const std::string& name,
-             ShaderCallback callback,
-             bool indexed = true);
+             ShaderCallback callback);
       ~Shader();
 
       virtual void Initialize() = 0;
@@ -44,7 +43,6 @@ namespace WickedSick
       virtual std::string GetName() const final;
       virtual void PrepareBuffers(void* data = nullptr) final;
 
-      virtual void SetIndexed(bool index) final;
 
       virtual void AddTexture(Texture* comp) final;
       virtual Texture* GetTexture(const std::string& name) final;
@@ -57,7 +55,6 @@ namespace WickedSick
       //                              WCHAR*);
       std::string name_;
       ShaderCallback callback_;
-      bool indexed_;//kinda shitty should change at some point
 
       std::unordered_map<Model*, std::vector<ModelComponent*>> instance_list_;
 

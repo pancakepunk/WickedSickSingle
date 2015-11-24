@@ -1,15 +1,32 @@
 CS300 Readme
 Mark Lauzon
-Assignment 1
+Assignment 2
 
 building the project:
 - anttweakbar.dll is required to build and run, make sure its in the working directory.
+- must be built on vs 2015 or higher will NOT build on prior versions of visual studio
 
 special instructions:
 - change the object id to change the selected object.
   properties appear in the other bar.
 
-- change the drawtype to toggle normal drawing (0 = default, 2 = vertnormals, 3 = facenormals)
+- enums relevant to project demo
+  demo type enum
+  0 no demo
+  1 normal mapping
+  2 texture mapping
+
+  entity type enum
+  0 centroid
+  1 normal
+  2 position
+  3 reflection
+
+  mapping type enum
+  0 planar
+  1 cylindrical
+  2 spherical
+  3 cubic
 
 - change the shader field to toggle between shaders
   "pixelblinn"
@@ -25,7 +42,6 @@ controls:
 - scroll wheel / + or - to zoom
 
 known bugs:
-- you may only set the position of a light via the transform (the position in the lightcomponent clones it, but not vice versa)
 - when drawtype = 1, it draws the tris as lines (not as wireframe)
 - oversaturation of light is not accounted for
 - dramatic frame rate decrease when drawing normals

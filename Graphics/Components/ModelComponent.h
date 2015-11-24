@@ -33,8 +33,8 @@ namespace WickedSick
   public:
 
     MetaDef;
-    ModelComponent( const std::string& model = "",
-                                    GameObject* owner = nullptr);
+    ModelComponent(const std::string& model = "",
+                   GameObject* owner = nullptr);
     ~ModelComponent();
     void Destroy();
     void SetModel(const std::string& model);
@@ -49,7 +49,10 @@ namespace WickedSick
     Material& GetMaterial();
 
     void SetTexture(const std::string& newTex);
+    void SetNormalMap(const std::string& newTex);
+    
     std::string GetTexture();
+    std::string GetNormalMap();
   private:
 
     Material material_props_;
@@ -58,6 +61,7 @@ namespace WickedSick
     std::string model_;
     std::string shader_;
     std::string texture_;
+    std::string normal_map_;
     Model* base_;
 
     //std::set<Texture*> textures_;

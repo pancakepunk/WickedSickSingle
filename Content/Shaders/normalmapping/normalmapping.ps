@@ -1,0 +1,71 @@
+struct PixelInputType
+{
+  float4x4 modelToWorld : MTW;
+  float4 positionClip : SV_POSITION;
+  float4 positionWorld : POSITION0;
+  float4 positionModel : POSITION1;
+  float3 normal : NORMAL;
+  float3 tangent : TANGENT;
+  float3 bitangent : BITANGENT;
+  float2 tex : TEXCOORD;
+};
+
+
+;
+#include "../common/lightingHelpers.fx"
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 posWS = input.positionWorld;
+  float3 fullView = cameraPos - posWS.xyz;
+  float  viewLen = length(fullView);
+  float3 view = fullView/viewLen;
+  
+  float fogScalar = calcFog(fogNear, fogFar, viewLen);
+  float4 globalAmbient = globalAmbientColor * globalAmbientIntensity;
+
+  float4 emissive = emissiveColor * emissiveConstant;
+  float2 tex = input.positionModel.xy;
+
+  float4 texColor = textureArray[0].Sample(sampleType, tex);
+  float4 finalColor = float4(0.0,0.0,0.0,1.0);
+  
+  float4 normalSample = textureArray[1].SampleLevel(sampleType, tex , 0);
+
+  //normalSample = float4(normalize(normalSample.xyz), 1);
+  //
+  normalSample *= 2.0;
+  normalSample.x -= 1;
+  normalSample.y -= 1;
+  normalSample.z -= 1;
+  normalSample.w = 1;
+  //normalSample = float4(normalize(normalSample.xyz), 1);
+  float3x3 tbnMat = float3x3(float3(1,0,0), float3(0,1,0), input.normal);
+
+  //tbnMat = transpose(tbnMat);
+
+  float3 finalNormal = mul(normalSample.xyz, tbnMat);
+  finalNormal = normalize(finalNormal);
+
+  finalColor += emissive;
+
+  finalColor += sumDirLightsBlinn(texColor, finalNormal, view);
+  finalColor += sumPointLightsBlinn(texColor, finalNormal, view, posWS.xyz);
+  finalColor += sumSpotLightsBlinn(texColor, finalNormal, view, posWS.xyz);
+  finalColor += globalAmbient;
+
+  finalColor = (fogScalar * finalColor) + ((1.0-fogScalar)*fogColor);
+
+  //
+  //finalColor *= 0.00001;
+  //finalColor += float4(finalNormal.xyz, 1);
+  ////finalColor.y += input.tex.y;
+  //finalColor.z = 0.0f;
+
+  return finalColor;
+
+  
+}

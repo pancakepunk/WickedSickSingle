@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "CameraController.h"
 #include "CameraComponent.h"

@@ -76,6 +76,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);Editor;EventSystem;Meta;Input;Window;Math;Testing;Utility;ObjectFactory;Core;Physics;Graphics;$(SolutionDir)Master;Master;$(SolutionDir)Externals;$(SolutionDir)common;F:\Program Files (x86)\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -102,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);Editor;EventSystem;Meta;Input;Window;Math;Testing;Utility;ObjectFactory;Core;Physics;Graphics;$(SolutionDir)Master;Master;$(SolutionDir)Externals;$(SolutionDir)common;F:\Program Files (x86)\Windows Kits\8.1\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_RELEASE;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -135,6 +139,7 @@
     <ClCompile Include="Core\System\System.cpp" />
     <ClCompile Include="Debugging\DebugPrecompiled.cpp" />
     <ClCompile Include="Debugging\DebugPrint.cpp" />
+    <ClCompile Include="Graphics\Components\DemoComponent.cpp" />
     <ClCompile Include="Editor\EditorPrecompiled.cpp" />
     <ClCompile Include="Editor\System\Editor.cpp" />
     <ClCompile Include="Editor\TweakBarCallbacks.cpp" />
@@ -168,9 +173,18 @@
     <ClCompile Include="Graphics\Model\Renderable.cpp" />
     <ClCompile Include="Graphics\Model\Vertex.cpp" />
     <ClCompile Include="Graphics\Particles\Interpolator.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleComponent.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleDescription.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleManager.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleEmitter.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleSystem.cpp" />
+    <ClCompile Include="Graphics\RenderTarget\DxRenderTarget.cpp" />
+    <ClCompile Include="lodepng\lodepng.cpp" />
+    <ClCompile Include="lodepng\lodepng_util.cpp" />
+    <ClCompile Include="Precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Graphics\SceneConstants.cpp" />
     <ClCompile Include="Graphics\Shader\DxShader.cpp" />
     <ClCompile Include="Graphics\Shader\ParamTypeInfo.cpp" />
@@ -199,12 +213,19 @@
     <ClCompile Include="Math\Vector\Vector4.cpp" />
     <ClCompile Include="Math\Vector\Vector4i.cpp" />
     <ClCompile Include="Meta\Constructor\Constructor.cpp" />
+    <ClInclude Include="Graphics\RenderTarget\DxRenderTarget.h" />
+    <ClInclude Include="Graphics\Components\DemoComponent.h" />
     <ClInclude Include="Graphics\D3D\WICTextureLoader.h" />
     <ClInclude Include="Graphics\Particles\Interpolator.h" />
+    <ClInclude Include="Graphics\Particles\ParticleComponent.h" />
     <ClInclude Include="Graphics\Particles\ParticleDescription.h" />
     <ClInclude Include="Graphics\Particles\ParticleEnums.h" />
     <ClInclude Include="Graphics\Particles\ParticleManager.h" />
     <ClInclude Include="Graphics\Particles\ParticleEmitter.h" />
+    <ClInclude Include="Graphics\Particles\ParticleSystem.h" />
+    <ClInclude Include="lodepng\lodepng.h" />
+    <ClInclude Include="lodepng\lodepng_util.h" />
+    <ClInclude Include="Precompiled.h" />
     <ClInclude Include="Meta\Constructor\ConstructorTemplate.cpp" />
     <ClCompile Include="Meta\Definitions\ExternalTypes.cpp" />
     <ClCompile Include="Meta\Definitions\Primitives.cpp" />
@@ -248,6 +269,7 @@
     <ClCompile Include="Physics\Resolution\ContactManifold.cpp" />
     <ClCompile Include="Physics\Resolution\PointConstraint.cpp" />
     <ClCompile Include="Physics\System\Physics.cpp" />
+    <ClCompile Include="Graphics\RenderTarget\RenderTarget.cpp" />
     <ClCompile Include="Testing\Tester.cpp" />
     <ClCompile Include="Testing\TestingPrecompiled.cpp" />
     <ClCompile Include="Testing\Tests\HashMapTests.cpp" />
@@ -405,6 +427,7 @@
     <ClInclude Include="Physics\Resolution\ContactManifold.h" />
     <ClInclude Include="Physics\Resolution\PointConstraint.h" />
     <ClInclude Include="Physics\System\Physics.h" />
+    <ClInclude Include="Graphics\RenderTarget\RenderTarget.h" />
     <ClInclude Include="Testing\FailReasons.h" />
     <ClInclude Include="Testing\Tester.h" />
     <ClInclude Include="Testing\TestInfo.h" />

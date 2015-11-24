@@ -24,8 +24,7 @@ namespace WickedSick
   {
   public:
     DxShader(const std::string& name,
-             ShaderCallback callback,
-             bool indexed = true);
+             ShaderCallback callback);
     ~DxShader();
 
     void Initialize();

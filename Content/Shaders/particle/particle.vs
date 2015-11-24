@@ -13,10 +13,11 @@ cbuffer Particle
   float4 Color;
   
   float4 Scale;
+  float4 PrevPos;//runtime data
   float Rotation;
   float Lifetime;
-
-  float4 PrevPos;//runtime data
+  float timepassed;
+  float temp;
 };
 
 
@@ -35,11 +36,26 @@ PixelInputType main(VertexInput input)
 {
   PixelInputType output;
 
-  float4 posWS = mul(float4(input.position.xyz, 1), modelToWorld);
+  float4 posWS;// = mul(float4(input.position.xyz, 1), modelToWorld);
   //posWS += Position;
   posWS.w = 1;
   //float4x4 worldToClip = mul(worldToCamera, cameraToClip);
+
+  float4x4 tempCam = transpose(worldToCamera);
+  tempCam[3][0] = modelToWorld[3][0];
+  tempCam[3][1] = modelToWorld[3][1];
+  tempCam[3][2] = modelToWorld[3][2];
+
+  tempCam[3][3] = 1.0f;
+  tempCam[0][3] = 0.0;
+  tempCam[1][3] = 0.0;
+  tempCam[2][3] = 0.0;
+
+
+  posWS = mul(float4(input.position.xyz, 1), tempCam);
+  //posWS.x = 0.0f;
   float4 posVS = mul(posWS, worldToCamera);
+  //posVS.z = 10.0f;
   //posVS += Position;
   float4 posCS = mul(posVS, cameraToClip);
 

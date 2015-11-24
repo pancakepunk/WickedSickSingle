@@ -9,6 +9,7 @@ namespace WickedSick
   
   struct EmitterDescription;
   struct ParticleDescription;
+  class ParticleEmitter;
   struct LightingShaderParam
   {
     ModelComponent* modelComp;
@@ -17,7 +18,7 @@ namespace WickedSick
   struct ParticleShaderParam
   {
     ParticleDescription* particle;
-    EmitterDescription* emitter;
+    ParticleEmitter* emitter;
     Shader* shader;
   };
   void ParticleShaderCallback(Graphics* gSys, void* data, std::vector<ParamPasser>& params);

@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "MathPrecompiled.h"
 #include "MathUtility.h"
 #include "Vector/Vector4.h"

@@ -16,7 +16,7 @@ PixelInputType main(VertexInput input)
 
   float4 posWS = mul(float4(input.position.xyz, 1), modelToWorld);
   float4 posCS = mul(posWS, worldToClip);
-  float4 normalWS = normalize(mul(float4(input.normal, 0), modelToWorld));
+  float4 normalWS = normalize(mul(float4(input.normal + (input.tangent * 0.00001), 0), modelToWorld));
 
   
   output.positionWorld = posWS;

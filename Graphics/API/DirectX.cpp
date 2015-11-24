@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "DirectX.h"
 
@@ -39,19 +40,49 @@ namespace WickedSick
     return model_factory_.MakeBlank();
   }
 
-  Texture* DirectX::MakeTexture(const std::string & name)
+  Texture* DirectX::MakeTexture(const TextureDesc& desc)
+  {
+    return texture_factory_.Create(desc);
+  }
+
+  Texture* DirectX::MakeTexture(const std::string& name)
   {
     return texture_factory_.Create(name);
   }
 
-  Shader* DirectX::MakeShader(const std::string& name, Shader::ShaderCallback callback, bool indexed)
+  Texture* DirectX::MakeTexture(const std::vector<unsigned char>& tex,
+                                const TextureDesc& desc)
   {
-    return shader_factory_.Create(name, callback, indexed);
+    return texture_factory_.Create(tex, desc);
+  }
+
+  Shader* DirectX::MakeShader(const std::string& name, Shader::ShaderCallback callback)
+  {
+    return shader_factory_.Create(name, callback);
+  }
+
+  RenderTarget * DirectX::MakeRenderTarget(const RenderTargetDesc& desc)
+  {
+    return render_target_factory_.Create(desc);
   }
 
   SwapChain* DirectX::GetSwapChain()
   {
     return swap_chain_;
+  }
+
+  void DirectX::SetBlendType(BlendType::Enum type)
+  {
+    FLOAT blend[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    blend_type_ = type;
+    swap_chain_->device->D3DContext->OMSetBlendState(blend_states_[blend_type_], blend, 0xFFFFFFFF);
+  }
+
+  void DirectX::SetDepthType(DepthType::Enum type)
+  {
+    depth_type_ = type;
+    swap_chain_->device->D3DContext->OMSetDepthStencilState(depth_stencil_states_[depth_type_],
+                                                            1);
   }
 
   void DirectX::Initialize( GraphicsOptions* options,
@@ -68,19 +99,72 @@ namespace WickedSick
     //all backbuffer stuff?
     ID3D11Texture2D* backBufferPtr;
     // Get the pointer to the back buffer.
-    swap_chain_->D3DSwapChain->GetBuffer( 0, 
-                                          __uuidof(ID3D11Texture2D), 
-                                          (LPVOID*)&backBufferPtr);
+    swap_chain_->D3DSwapChain->GetBuffer(0,
+                                         __uuidof(ID3D11Texture2D),
+                                         (LPVOID*) &backBufferPtr);
     // Create the render target view with the back buffer pointer.
-    DxError(swap_chain_->device->D3DDevice->CreateRenderTargetView( backBufferPtr, 
-                                                                    nullptr, 
-                                                                    &render_target_view_));
+    DxError(swap_chain_->device->D3DDevice->CreateRenderTargetView(backBufferPtr,
+                                                                   nullptr,
+                                                                   &back_buffer_view_));
     
     // Release pointer to the back buffer as we no longer need it.
     backBufferPtr->Release();
     backBufferPtr = 0;
     // so make a generic backbuffer class probs?
     //////////////////////////
+
+
+    D3D11_BLEND_DESC additive;
+    SecureZeroMemory(&additive, sizeof(D3D11_BLEND_DESC));
+    additive.AlphaToCoverageEnable = false;
+    additive.IndependentBlendEnable = false;
+    
+    additive.RenderTarget[0].BlendEnable = TRUE;
+    additive.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    additive.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    additive.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+    
+    additive.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    additive.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    additive.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    
+    additive.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+    DxError(swap_chain_->device->D3DDevice->CreateBlendState(&additive, 
+                                                             &blend_states_[BlendType::Additive]));
+
+
+
+    
+
+    D3D11_BLEND_DESC normal;
+    SecureZeroMemory(&normal, sizeof(D3D11_BLEND_DESC));
+    normal.AlphaToCoverageEnable = false;
+    normal.IndependentBlendEnable = false;
+
+    normal.RenderTarget[0].BlendEnable = TRUE;
+    normal.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    normal.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    normal.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+
+    normal.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    normal.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+    normal.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+
+    normal.RenderTarget[0].RenderTargetWriteMask = 0x0F;
+    
+    DxError(swap_chain_->device->D3DDevice->CreateBlendState(&normal, 
+                                                             &blend_states_[BlendType::Normal]));
+    
+    normal.RenderTarget[0].BlendEnable = FALSE;
+    DxError(swap_chain_->device->D3DDevice->CreateBlendState(&normal, 
+                                                             &blend_states_[BlendType::Off]));
+    //if(blendState)
+    //{
+    //  
+    //}
+
+
 
     //////////////////////////
     // depth buffer description
@@ -107,7 +191,7 @@ namespace WickedSick
     depthStencilDesc.DepthEnable = true;
     depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
+    
     depthStencilDesc.StencilEnable = true;
     depthStencilDesc.StencilReadMask = 0xFF;
     depthStencilDesc.StencilWriteMask = 0xFF;
@@ -126,9 +210,28 @@ namespace WickedSick
 
     // Create the depth stencil state.
     DxError(swap_chain_->device->D3DDevice->CreateDepthStencilState(&depthStencilDesc, 
-                                                                    &depth_stencil_state_));
-    swap_chain_->device->D3DContext->OMSetDepthStencilState(depth_stencil_state_, 
-                                                            1);
+                                                                    &depth_stencil_states_[DepthType::Normal]));
+
+    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    //
+    //// Stencil operations if pixel is front-facing.
+    //depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    //depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+    //depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+    //depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    //
+    //// Stencil operations if pixel is back-facing.
+    //depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    //depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+    //depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+    //depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    //depthStencilDesc.StencilWriteMask = 0x00;
+    DxError(swap_chain_->device->D3DDevice->CreateDepthStencilState(&depthStencilDesc,
+                                                                    &depth_stencil_states_[DepthType::Off]));
+
+
+    //swap_chain_->device->D3DContext->OMSetDepthStencilState(depth_stencil_state_, 
+    //                                                        1);
     
     //
     //////////////////////////
@@ -142,6 +245,8 @@ namespace WickedSick
     depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDesc.Texture2D.MipSlice = 0;
 
+    //depthStencilViewDesc.Flags = D3D11_DSV_READ_ONLY_STENCIL;
+
     // Create the depth stencil view.
     DxError(swap_chain_->device->D3DDevice->CreateTexture2D(&depthBufferDesc, NULL, &depth_stencil_buffer_));
 
@@ -149,12 +254,12 @@ namespace WickedSick
                                                                     &depthStencilViewDesc, 
                                                                     &depth_stencil_view_));
     swap_chain_->device->D3DContext->OMSetRenderTargets(1, 
-                                                        &render_target_view_, 
+                                                        &back_buffer_view_, 
                                                         depth_stencil_view_);
 
     D3D11_RASTERIZER_DESC rasterDesc;
     rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_FRONT;
+    rasterDesc.CullMode = D3D11_CULL_NONE;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
     rasterDesc.DepthClipEnable = true;
@@ -295,7 +400,7 @@ namespace WickedSick
   void DirectX::clear_buffers()
   {
     // Clear the back buffer.
-    swap_chain_->device->D3DContext->ClearRenderTargetView(render_target_view_, &(options_->ClearColor[0]));
+    swap_chain_->device->D3DContext->ClearRenderTargetView(back_buffer_view_, &(options_->ClearColor[0]));
     
     // Clear the depth buffer.
     swap_chain_->device->D3DContext->ClearDepthStencilView(depth_stencil_view_, D3D11_CLEAR_DEPTH, 1.0f, 0);

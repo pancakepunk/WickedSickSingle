@@ -1,3 +1,3 @@
 
-Texture2D textureArray[1];
+Texture2D textureArray[2];
 SamplerState sampleType;

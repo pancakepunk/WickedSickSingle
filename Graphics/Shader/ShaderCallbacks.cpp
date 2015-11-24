@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "ShaderCallbacks.h"
 
@@ -41,7 +42,8 @@ namespace WickedSick
     LightingShaderParam* callbackParams = (LightingShaderParam*)data;
     ModelComponent* comp = callbackParams->modelComp;
     Shader* shader = callbackParams->shader;
-    shader->AddTexture(gSys->GetTexture(comp->GetTexture()));
+    shader->AddTexture(gSys->GetTexture(comp->GetTexture  ()));
+    shader->AddTexture(gSys->GetTexture(comp->GetNormalMap()));
 
     if(comp)
     {
@@ -162,18 +164,25 @@ namespace WickedSick
   {
     ParticleShaderParam* particleParam = (ParticleShaderParam*)data;
     ParticleDescription* particle = particleParam->particle;
-    particleParam->shader->AddTexture(gSys->GetTexture(particleParam->emitter->sourceTexture));
+    EmitterDescription& emitterDesc = particleParam->emitter->GetEmitterDescription();
+    ParticleSystem* system = particleParam->emitter->GetSystem();
+    //Transform* tr = (Transform*)system->GetComponent()->GetSibling(CT_Transform);
+    particleParam->shader->AddTexture(gSys->GetTexture(emitterDesc.sourceTexture));
     
 
     if(particle)
     {
+      Vector4 particlePos(particle->Position);
+      //particlePos += emitterDesc.spawnPos;
+      //particlePos += system->GetSystemDescription().position;
+      //particlePos +=
       Matrix4 modelToWorld;
       modelToWorld.Identity();
       Camera* camera = gSys->GetCamera();
 
       
-      Matrix4 scale = modelToWorld.GetScaled(Vector3(particle->Scale.x, particle->Scale.y, particle->Scale.z));
-      Matrix4 translate = modelToWorld.GetTranslated(Vector3(particle->Position.x, particle->Position.y, particle->Position.z));
+      Matrix4 scale = modelToWorld.GetScaled(particle->Scale.xyz());
+      Matrix4 translate = modelToWorld.GetTranslated(particlePos.xyz());
       modelToWorld = translate * scale;
 
       Matrix4 worldToCamera = camera->GetViewMatrix();

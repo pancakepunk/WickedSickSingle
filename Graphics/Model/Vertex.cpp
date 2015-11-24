@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "Vertex.h"
 
@@ -7,11 +8,11 @@ namespace WickedSick
 {
   bool Vertex::operator==(const Vertex& rhs)
   {
-    return (position == rhs.position) && (normal == rhs.normal) && (tex == rhs.tex);
+    return (position == rhs.position) && (normal == rhs.normal) && (tangent == rhs.tangent) && (bitangent == rhs.bitangent) && (tex == rhs.tex);
   }
   std::string Vertex::to_string()
   {
-    return position.to_string() + normal.to_string() + tex.to_string();
+    return position.to_string() + normal.to_string() + tangent.to_string() + bitangent.to_string() + tex.to_string();
   }
   void Vertex::Print()
   {

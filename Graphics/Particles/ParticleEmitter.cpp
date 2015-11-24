@@ -1,10 +1,12 @@
+#include "Precompiled.h"
 #include "ParticleEmitter.h"
 #include "Graphics/Model/Model.h"
 
 #include "Core/CoreInterface.h"
 #include "Graphics/GraphicsInterface.h"
 
-#include <random>
+
+#include "ParticleSystem.h"
 
 namespace WickedSick
 {
@@ -18,9 +20,12 @@ namespace WickedSick
   }
 
   ParticleEmitter::ParticleEmitter(size_t particleCount,
-                                   const EmitterDescription& description)
+                                   const EmitterDescription& description,
+                                   ParticleSystem* base)
   : burst_timer_(0.0f),
-    description_(description)
+    emit_timer_(0.1f),
+    description_(description),
+    base_(base)
   {
     emit_timer_ = description_.emitLength;
     particles_.resize(particleCount);
@@ -160,6 +165,11 @@ namespace WickedSick
     auto particleDescMeta = FindType(ParticleDescription);
     auto member = particleDescMeta->GetMember(memberName);
     members_to_interpolate_.insert(member);
+  }
+
+  ParticleSystem * ParticleEmitter::GetSystem()
+  {
+    return base_;
   }
 
   void ParticleEmitter::Render()

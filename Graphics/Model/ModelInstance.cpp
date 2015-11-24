@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "Graphics/GraphicsInterface.h"
 #include "ModelInstance.h"

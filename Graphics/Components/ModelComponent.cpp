@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "ModelComponent.h"
 
@@ -106,26 +107,26 @@ namespace WickedSick
       {
         std::vector<Vertex> verts = base_->GetVerts();
         Vertex newVert;
-        std::vector<Face> faces = base_->GetFaces();
-        endVerts.reserve(faces.size() * 2);
-        Vector3 v0v1;
-        Vector3 v0v2;
-        for(auto it = faces.begin(); it != faces.end(); ++it)
-        {
-          newVert.position =  (verts[it->indices[0]].position + 
-                               verts[it->indices[1]].position +
-                               verts[it->indices[2]].position) * (1.0f / 3.0f);
-          
-
-          v0v1 = (verts[it->indices[1]].position - verts[it->indices[0]].position).GetNormalized();
-          v0v2 = (verts[it->indices[2]].position - verts[it->indices[0]].position).GetNormalized();
-          newVert.normal =  v0v1.Cross(v0v2);
-          endVerts.push_back(newVert);
-          newVert.position.x += (1.0f/tr->GetScale().x) * newVert.normal.x * 0.5f;
-          newVert.position.y += (1.0f/tr->GetScale().y) * newVert.normal.y * 0.5f;
-          newVert.position.z += (1.0f/tr->GetScale().z) * newVert.normal.z * 0.5f;
-          endVerts.push_back(newVert);
-        }
+        //std::vector<Face> faces = base_->GetFaces();
+        //endVerts.reserve(faces.size() * 2);
+        //Vector3 v0v1;
+        //Vector3 v0v2;
+        //for(auto it = faces.begin(); it != faces.end(); ++it)
+        //{
+        //  newVert.position =  (verts[it->indices[0]].position + 
+        //                       verts[it->indices[1]].position +
+        //                       verts[it->indices[2]].position) * (1.0f / 3.0f);
+        //  
+        //
+        //  v0v1 = (verts[it->indices[1]].position - verts[it->indices[0]].position).GetNormalized();
+        //  v0v2 = (verts[it->indices[2]].position - verts[it->indices[0]].position).GetNormalized();
+        //  newVert.normal =  v0v1.Cross(v0v2);
+        //  endVerts.push_back(newVert);
+        //  newVert.position.x += (1.0f/tr->GetScale().x) * newVert.normal.x * 0.5f;
+        //  newVert.position.y += (1.0f/tr->GetScale().y) * newVert.normal.y * 0.5f;
+        //  newVert.position.z += (1.0f/tr->GetScale().z) * newVert.normal.z * 0.5f;
+        //  endVerts.push_back(newVert);
+        //}
 
         
         break;
@@ -150,6 +151,11 @@ namespace WickedSick
   void ModelComponent::SetTexture(const std::string& texture)
   {
     texture_ = texture;
+  }
+
+  void ModelComponent::SetNormalMap(const std::string & newTex)
+  {
+    normal_map_ = newTex;
   }
 
   Model* ModelComponent::GetBase()
@@ -180,6 +186,11 @@ namespace WickedSick
   std::string ModelComponent::GetTexture()
   {
     return texture_;
+  }
+
+  std::string ModelComponent::GetNormalMap()
+  {
+    return normal_map_;
   }
 
 
@@ -215,4 +226,6 @@ RegisterMember(material_props_);
 RegisterMember(draw_type_);
 RegisterMember(shader_);
 RegisterMember(model_);
+RegisterMember(texture_);
+RegisterMember(normal_map_);
 }

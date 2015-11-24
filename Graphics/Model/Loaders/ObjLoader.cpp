@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 
 #include "System/Graphics.h"
@@ -6,7 +7,7 @@
 
 #include "ObjLoader.h"
 
-#include <unordered_map>
+
 
 namespace WickedSick
 {
@@ -150,7 +151,7 @@ namespace WickedSick
         faceList.push_back(face);
       }
 
-      newModel->Set(vertexList, faceList);
+      newModel->Set(vertexList);
     }
     else
     {

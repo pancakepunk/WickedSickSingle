@@ -12,7 +12,7 @@ float4 main(PixelInputType input) : SV_TARGET
   float3 fullView = cameraPos - posWS.xyz;
   float  viewLen = length(fullView);
   float3 view = fullView/viewLen;
-  ;
+  
   float fogScalar = calcFog(fogNear, fogFar, viewLen);
   float4 globalAmbient = globalAmbientColor * globalAmbientIntensity;
 
@@ -28,8 +28,29 @@ float4 main(PixelInputType input) : SV_TARGET
   finalColor += globalAmbient;
 
   finalColor = (fogScalar * finalColor) + ((1.0-fogScalar)*fogColor);
-  //finalColor *= 0.00001;
+
   //finalColor += textureArray[0].Sample(sampleType, input.tex);
+  //finalColor.x += input.tex.x;
+  //finalColor.y += input.tex.y;
+  //finalColor.z = 0.0f;
+  //if(input.tex.x < 0.01)
+  //{
+  //  finalColor.x = 1.0;
+  //  finalColor.y = 0.0;
+  //  finalColor.z = 0.0;
+  //}
+  //if(input.normal.x < 0.0)
+  //if(input.tex.x > 0.99)
+  {
+    //finalColor.x = 0.0;
+    //finalColor.y = 1.0;
+    //finalColor.z = 0.0;
+  }
+
+  //if(input.tex.y == 1.0)
+  //{
+  //  finalColor.y = 0.0;
+  //}
   return finalColor;
 
   

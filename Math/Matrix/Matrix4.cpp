@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 ///////////////////////////////////////////////////////////////////////////
 //Author:      Mark
 //Date:        4/4/2014
@@ -13,8 +14,8 @@
 #include "Math/MathUtility.h"
 
 
-#include <utility>
-#include <cmath>
+
+
 
 namespace WickedSick
 {

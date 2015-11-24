@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-#include <vector>
 #include "meta/Lua/LuaUserdata.h"
 #include "meta/Lua/LuaIncludes.h"
 #include "meta/Utility/MetaMacros.h"

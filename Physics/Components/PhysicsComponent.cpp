@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "PhysicsPrecompiled.h"
 #include "PhysicsComponent.h"
 #include "Core/CoreInterface.h"

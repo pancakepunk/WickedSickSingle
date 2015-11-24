@@ -5,11 +5,6 @@
 #include "meta/Constructor/Constructor.h"
 #include "meta/Lua/LuaUserdata.h"
 #include "meta/Lua/LuaIncludes.h"
-#include <set>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <map>
 
 
 namespace Reflection

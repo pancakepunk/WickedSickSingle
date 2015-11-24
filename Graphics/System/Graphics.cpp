@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "Graphics.h"
 
@@ -32,7 +33,7 @@
 
 #include "anttweakbar/include/AntTweakBar.h"
 
-
+#include "lodepng/lodepng.h"
 
 #include <thread>
 #include <mutex>
@@ -112,9 +113,68 @@ namespace WickedSick
 
     mat_stack_->Push(projection_matrix_);
     
+    RenderTargetDesc desc;
+    desc.size = window->GetWindowSize();
     
+    RenderTarget* newRenderTarget = graphicsAPI->MakeRenderTarget(desc);
+    
+    
+  }
 
-    
+  Model* generate_quad()
+  {
+    Model* quad = Graphics::graphicsAPI->MakeModel();
+    std::vector<Vertex> quadVerts;
+    quadVerts.resize(6);
+
+    /*
+     ___
+    |\  |
+    | \ |
+    |  \|
+     ---
+
+    */
+
+
+
+    quadVerts[0].position = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[1].position = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[2].position = Vector3(1.0f, 1.0f, 0.0f);
+    quadVerts[3].position = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[4].position = Vector3(0.0f, 0.0f, 0.0f);
+    quadVerts[5].position = Vector3(1.0f, 0.0f, 0.0f);
+
+    quadVerts[0].normal = Vector3(0.0f, 0.0f, 1.0f);
+    quadVerts[1].normal = Vector3(0.0f, 0.0f, 1.0f);
+    quadVerts[2].normal = Vector3(0.0f, 0.0f, 1.0f);
+    quadVerts[3].normal = Vector3(0.0f, 0.0f, 1.0f);
+    quadVerts[4].normal = Vector3(0.0f, 0.0f, 1.0f);
+    quadVerts[5].normal = Vector3(0.0f, 0.0f, 1.0f);
+
+    quadVerts[0].tangent = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[1].tangent = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[2].tangent = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[3].tangent = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[4].tangent = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[5].tangent = Vector3(1.0f, 0.0f, 0.0f);
+
+    quadVerts[0].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[1].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[2].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[3].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[4].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+    quadVerts[5].bitangent = Vector3(0.0f, 1.0f, 0.0f);
+
+    quadVerts[0].tex = Vector2(0.0f, 0.0f); 
+    quadVerts[2].tex = Vector2(1.0f, 0.0f);
+    quadVerts[1].tex = Vector2(1.0f, 1.0f);
+    quadVerts[3].tex = Vector2(0.0f, 1.0f);
+    quadVerts[4].tex = Vector2(0.0f, 0.0f);
+    quadVerts[5].tex = Vector2(1.0f, 0.0f);
+    quad->Set(quadVerts);
+    quad->Initialize();
+    return quad;
     
   }
 
@@ -128,80 +188,120 @@ namespace WickedSick
     LoadModel("dragon.bin");
     LoadModel("horse.bin");
 
+    LoadModel("smoothbox.bin");
+    LoadModel("smoothbunny.bin");
+    LoadModel("smoothsphere.bin");
+    LoadModel("smoothplane.bin");
+    LoadModel("smoothdragon.bin");
+    LoadModel("smoothhorse.bin");
+    
+    models_.insert("quad", generate_quad());
+    
+
     LoadTexture("white.png");
     LoadTexture("cat_test.png");
-
+    LoadTexture("other_checkerboard.png");
+    LoadTexture("sheep.png");
+    LoadTexture("bettercheckerboard.png");
+    LoadTexture("diffuseroof.png");
+    LoadTexture("basic-normal.png");
+    LoadTexture("feather.png");
+    LoadBumpMap("specularroof.png");
+    
     AddShader("flat", &vertexShaderCallback);
     AddShader("vertexblinn", &vertexShaderCallback);
-    AddShader("lines", &LineShaderCallback, false);
+    AddShader("lines", &LineShaderCallback);
     AddShader("vertexphong", &vertexShaderCallback);
     AddShader("pixelphong", &vertexShaderCallback);
     AddShader("pixelblinn", &vertexShaderCallback);
     AddShader("particle", &ParticleShaderCallback);
+
+    AddShader("reflectionplanar", &vertexShaderCallback);
+    AddShader("reflectioncylindrical", &vertexShaderCallback);
+    AddShader("reflectionspherical", &vertexShaderCallback);
+    AddShader("reflectioncubic", &vertexShaderCallback);
+
+    AddShader("normalplanar", &vertexShaderCallback);
+    AddShader("normalcylindrical", &vertexShaderCallback);
+    AddShader("normalspherical", &vertexShaderCallback);
+    AddShader("normalcubic", &vertexShaderCallback);
+
+    AddShader("positionplanar", &vertexShaderCallback);
+    AddShader("positioncylindrical", &vertexShaderCallback);
+    AddShader("positionspherical", &vertexShaderCallback);
+    AddShader("positioncubic", &vertexShaderCallback);
+
+    AddShader("centroidplanar", &vertexShaderCallback);
+    AddShader("centroidcylindrical", &vertexShaderCallback);
+    AddShader("centroidspherical", &vertexShaderCallback);
+    AddShader("centroidcubic", &vertexShaderCallback);
+    AddShader("normalmapping", &vertexShaderCallback);
+    
+
     //AddShader("wireframe", &WireframeShaderCallback);
     
 
-    EmitterDescription emitterDesc;
-    emitterDesc.emitLength = 0.05f;
-    emitterDesc.frequency = 0.1f;
-    emitterDesc.lazy = false;
-    emitterDesc.amountToSpawn = 12;
-    emitterDesc.lifetime = 0.0f;
-    emitterDesc.sourceModel = "sphere";
-    emitterDesc.sourceTexture = "white";
-    emitterDesc.spawnPos = Vector3(10.0f, 2.0f, 10.0f);
-    ParticleEmitter* emitter = particle_manager_->MakeParticleEmitter(1000, emitterDesc);
-
-    ParticleDescription states[3];
-    states[0] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                   Vector4(0.0f, 1.0f, 0.0f, 1.0f),
-                                   Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-                                   Vector4(0.5f, 0.5f, 0.5f, 0.5f),
-                                   0.0f, 
-                                   5.0f);
-    states[1] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                   Vector4(0.0f, 0.5f, 0.0f, 1.0f),
-                                   Vector4(1.0f, 0.25f, 0.25f, 0.0f),
-                                   Vector4(0.25f, 0.25f, 0.25f, 0.0f),
-                                   0.0f,
-                                   5.0f);
-
-    states[2] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                   Vector4(0.0f, 0.25f, 0.0f, 1.0f),
-                                   Vector4(1.0f, 1.0f, 0.1f, 0.0f),
-                                   Vector4(0.05f, 0.05f, 0.05f, 0.0f),
-                                   0.0f,
-                                   5.0f);
-
-
-    ParticleDescription variance[3];
-    variance[0] = ParticleDescription(Vector4(0.1f, 0.25f, 0.1f, 0.0f),
-                                     Vector4(0.25f, 0.25f, 0.25f, 1.0f),
-                                     Vector4(),
-                                     Vector4(),
-                                     0.0f,
-                                     0.1f);
-    variance[1] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
-                                     Vector4(0.25f, 0.25f, 0.25f, 1.0f),
-                                     Vector4(),
-                                     Vector4(),
-                                     0.0f,
-                                     0.1f);
-
-    variance[2] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
-                                     Vector4(0.1f, 0.1f, 0.1f, 1.0f),
-                                     Vector4(),
-                                     Vector4(),
-                                     0.0f,
-                                     0.1f);
-
-    emitter->AddParticleState(states[0], variance[0]);
-    emitter->AddParticleState(states[1], variance[1]);
-    emitter->AddParticleState(states[2], variance[2]);
-    emitter->RegisterAttribute("Velocity");
-    emitter->RegisterAttribute("Lifetime");
-    emitter->RegisterAttribute("Color");
-    emitter->RegisterAttribute("Scale");
+    //EmitterDescription emitterDesc;
+    //emitterDesc.emitLength = 0.05f;
+    //emitterDesc.frequency = 0.1f;
+    //emitterDesc.lazy = false;
+    //emitterDesc.amountToSpawn = 12;
+    //emitterDesc.lifetime = 0.0f;
+    //emitterDesc.sourceModel = "sphere";
+    //emitterDesc.sourceTexture = "white";
+    //emitterDesc.spawnPos = Vector3(10.0f, 2.0f, 10.0f);
+    //ParticleEmitter* emitter = particle_manager_->MakeParticleEmitter(1000, emitterDesc);
+    //
+    //ParticleDescription states[3];
+    //states[0] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
+    //                               Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+    //                               Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+    //                               Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+    //                               0.0f, 
+    //                               5.0f);
+    //states[1] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
+    //                               Vector4(0.0f, 0.5f, 0.0f, 1.0f),
+    //                               Vector4(1.0f, 0.25f, 0.25f, 0.0f),
+    //                               Vector4(0.25f, 0.25f, 0.25f, 0.0f),
+    //                               0.0f,
+    //                               5.0f);
+    //
+    //states[2] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
+    //                               Vector4(0.0f, 0.25f, 0.0f, 1.0f),
+    //                               Vector4(1.0f, 1.0f, 0.1f, 0.0f),
+    //                               Vector4(0.05f, 0.05f, 0.05f, 0.0f),
+    //                               0.0f,
+    //                               5.0f);
+    //
+    //
+    //ParticleDescription variance[3];
+    //variance[0] = ParticleDescription(Vector4(0.1f, 0.25f, 0.1f, 0.0f),
+    //                                 Vector4(0.25f, 0.25f, 0.25f, 1.0f),
+    //                                 Vector4(),
+    //                                 Vector4(),
+    //                                 0.0f,
+    //                                 0.1f);
+    //variance[1] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
+    //                                 Vector4(0.25f, 0.25f, 0.25f, 1.0f),
+    //                                 Vector4(),
+    //                                 Vector4(),
+    //                                 0.0f,
+    //                                 0.1f);
+    //
+    //variance[2] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
+    //                                 Vector4(0.1f, 0.1f, 0.1f, 1.0f),
+    //                                 Vector4(),
+    //                                 Vector4(),
+    //                                 0.0f,
+    //                                 0.1f);
+    //
+    //emitter->AddParticleState(states[0], variance[0]);
+    //emitter->AddParticleState(states[1], variance[1]);
+    //emitter->AddParticleState(states[2], variance[2]);
+    //emitter->RegisterAttribute("Velocity");
+    //emitter->RegisterAttribute("Lifetime");
+    //emitter->RegisterAttribute("Color");
+    //emitter->RegisterAttribute("Scale");
     
 
 
@@ -216,7 +316,7 @@ namespace WickedSick
   void Graphics::Update(float dt)
   {
     RecompileShaders();
-    particle_manager_->Update(dt);
+//    particle_manager_->Update(dt);
     camera_->Orient(dt);
     Render();
 
@@ -291,9 +391,106 @@ namespace WickedSick
     return newTex;
   }
 
-  void Graphics::AddShader(const std::string& name, Shader::ShaderCallback callback, bool indexed)
+  Texture * Graphics::LoadBumpMap(const std::string & map)
+  {
+    std::vector <unsigned char> png;
+    std::vector <unsigned char> image;
+    std::vector <Vector4> normals;
+
+    //x - tan
+    //y - bitan
+
+    unsigned width, height;
+    lodepng::load_file(png, "Content/Textures/" + map);
+    auto error = lodepng::decode(image, width, height, png);
+    if(error)
+    {
+      auto realerror = lodepng_error_text(error);
+      __debugbreak();
+    }
+    for(unsigned heightEntry = 0; heightEntry < height; ++heightEntry)
+    {
+      for(unsigned widthEntry = 0; widthEntry < width; ++widthEntry)
+      {
+        Vector3 uTan;
+        Vector3 vTan;
+
+        int leftSample;
+        int rightSample;
+        if((widthEntry + 1) < width)
+        {
+          rightSample = as_2d(image, width, heightEntry * 4, (widthEntry + 1) * 4);
+        }
+        else
+        {
+          rightSample = as_2d(image, width, heightEntry * 4, widthEntry * 4);
+        }
+
+        if(widthEntry > 0)
+        {
+          leftSample = as_2d(image, width, heightEntry * 4, (widthEntry - 1) * 4);
+        }
+        else
+        {
+          leftSample = as_2d(image, width, heightEntry * 4, widthEntry * 4);
+        }
+
+        uTan = Vector3(1.0f, 0.0f, (rightSample - leftSample));
+
+        int topSample;
+        int bottomSample;
+        if((heightEntry + 1) < height)
+        {
+          topSample = as_2d(image, width, (heightEntry + 1) * 4, widthEntry * 4);
+        }
+        else
+        {
+          topSample = as_2d(image, width, heightEntry * 4, widthEntry * 4);
+        }
+
+        if(heightEntry > 0)
+        {
+          bottomSample = as_2d(image, width, (heightEntry - 1) * 4, widthEntry * 4); 
+        }
+        else
+        {
+          bottomSample = as_2d(image, width, heightEntry * 4, widthEntry * 4);
+        }
+        vTan = Vector3(0.0f, 1.0f, (topSample - bottomSample));
+        uTan.Normalize();
+        vTan.Normalize();
+        Vector3 normal = uTan.Cross(vTan);
+        normals.push_back(Vector4(normal.GetNormalized(), 0.0f));
+      }
+    }
+    
+    
+    std::vector<unsigned char> normalColorVersion;
+    for(auto& it : normals)
+    {
+      normalColorVersion.push_back((it.x + 1) * 0.5f * 255);
+      normalColorVersion.push_back((it.y + 1) * 0.5f * 255);
+      normalColorVersion.push_back((it.z + 1) * 0.5f * 255);
+      normalColorVersion.push_back(255);
+    }
+    TextureDesc desc;
+    desc.size.x = width;
+    desc.size.y = height;
+    desc.writable = false;
+    Texture* newTex = graphicsAPI->MakeTexture(normalColorVersion, desc);
+    textures_.insert(newTex->GetName(), newTex);
+    newTex->Initialize();
+    return newTex;
+  }
+
+  ParticleManager * Graphics::GetParticleManager()
+  {
+    return particle_manager_;
+  }
+
+  void Graphics::AddShader(const std::string& name, Shader::ShaderCallback callback)
   { 
-    Shader* shader = graphicsAPI->MakeShader(name, callback, indexed);
+    Shader* shader = graphicsAPI->MakeShader(name, callback);
     shader->Initialize();
     shaders_.insert(shader->GetName(), shader);
   }
@@ -484,6 +681,8 @@ namespace WickedSick
     Matrix4 modelToWorld;
     BeginScene();
     
+    graphicsAPI->SetBlendType(BlendType::Off);
+    graphicsAPI->SetDepthType(DepthType::Normal);
     LightingShaderParam paramList;
     int count = 0;
     Shader* debugShader = nullptr;
@@ -506,7 +705,7 @@ namespace WickedSick
 
             shader->PrepareBuffers((void*)&paramList);
 
-            shader->Render(model->GetNumIndices());
+            shader->Render(model->GetNumVerts());
           }
         }
       }
@@ -516,31 +715,37 @@ namespace WickedSick
       }
     }
 
-    auto& particleSystems = particle_manager_->GetEmitters();
+    auto& particleSystems = particle_manager_->GetSystems();
     auto shaderIt = shaders_.find("particle");
     Shader* particleShader = nullptr;
     if(shaderIt != shaders_.end())
     {
       particleShader = (*shaderIt).val;
     }
-    
+    graphicsAPI->SetBlendType(BlendType::Additive);
+    graphicsAPI->SetDepthType(DepthType::Off);
     ParticleShaderParam particleParam;
     particleParam.shader = particleShader;
     Model* particleModel;
     for(auto& it : particleSystems)
     {
-      particleModel = GetModel(it->GetEmitterDescription().sourceModel);
-      particleModel->Render();
-      auto& particles = it->GetParticles();
-      particleParam.emitter = &(it->GetEmitterDescription());
-      for(auto& particleIndex : it->GetAlive())
+      for(auto& particleEmitter : it->GetEmitters())
       {
-        particleParam.particle = &particles[particleIndex];
-        particleShader->PrepareBuffers(&particleParam);
-        particleShader->Render(particleModel->GetNumIndices());
+        particleModel = GetModel(particleEmitter->GetEmitterDescription().sourceModel);
+        particleModel->Render();
+        particleParam.emitter = particleEmitter;
+        auto& particles = particleEmitter->GetParticles();
+        for(auto& particleIndex : particleEmitter->GetAlive())
+        {
+          particleParam.particle = &particles[particleIndex];
+          particleShader->PrepareBuffers(&particleParam);
+          particleShader->Render(particleModel->GetNumVerts());
+        }
       }
+      
     }
-
+    graphicsAPI->SetBlendType(BlendType::Off);
+    graphicsAPI->SetDepthType(DepthType::Normal);
     if(debugShader)
     {
       for(auto& it : debug_models_)

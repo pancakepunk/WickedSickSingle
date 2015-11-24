@@ -1,11 +1,10 @@
+#include "Precompiled.h"
 #include "DebugPrecompiled.h"
 
 #include "DebugPrint.h"
 
 #include "windows.h"
 
-#include <string>
-#include <iostream>
 
 namespace WickedSick
 {

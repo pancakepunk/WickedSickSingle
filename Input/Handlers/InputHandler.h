@@ -6,7 +6,7 @@
 
 #include "Utility/UtilityInterface.h"
 #include "Math/MathInterface.h"
-#include <set>
+
 
 
 namespace WickedSick

@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "ParticleManager.h"
 
 namespace WickedSick
@@ -9,40 +10,44 @@ namespace WickedSick
 
   void ParticleManager::Update(float dt)
   {
-    for(size_t i = 0; i < particle_emitters_.size(); )
+    for(size_t i = 0; i < particle_systems_.size(); )
     {
-      if(particle_emitters_[i]->IsDead())
+      if(particle_systems_[i]->IsDead())
       {
-        emitter_manager_.Delete(particle_emitters_[i]);
-        vector_remove(particle_emitters_, i);
+        system_manager_.Delete(particle_systems_[i]);
+        vector_remove(particle_systems_, i);
       }
-      else
+      else 
       {
-        particle_emitters_[i]->Update(dt);
+        if(particle_systems_[i]->GetActive())
+        {
+          particle_systems_[i]->Update(dt);
+        }
         ++i;
       }
       
     }
   }
 
+  ParticleSystem * ParticleManager::MakeParticleSystem(const SystemDescription & desc)
+  {
+    auto newSystem = system_manager_.New();
+    newSystem->SetSystemDescription(desc);
+    newSystem->Update(0.0f);
+    particle_systems_.push_back(newSystem);
+    return newSystem;
+  }
+
   ParticleEmitter* ParticleManager::MakeParticleEmitter(size_t count, const EmitterDescription& desc)
   {
-    particle_emitters_.push_back(emitter_manager_.New(count, desc));
-    for(size_t i = 0; i < particle_emitters_.size(); ++i)
-    {
-      particle_emitters_[i]->Update(0.0f);
-    }
-    return particle_emitters_.back();
+    auto newEmitter = emitter_manager_.New(count, desc);
+    newEmitter->Update(0.0f);
+    return newEmitter;
   }
 
-  void ParticleManager::KillParticleEmitter(ParticleEmitter * emitter)
+  std::vector<ParticleSystem*>& ParticleManager::GetSystems()
   {
-    emitter->Kill();
-  }
-
-  std::vector<ParticleEmitter*>& ParticleManager::GetEmitters()
-  {
-    return particle_emitters_;
+    return particle_systems_;
   }
 
 }

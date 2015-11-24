@@ -1,6 +1,6 @@
 #pragma once
-#include <unordered_map>
-#include <string>
+
+
 namespace Reflection
 {
   class Script;

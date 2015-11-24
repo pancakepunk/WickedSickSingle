@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "ObjectFactoryPrecompiled.h"
 #include "ComponentManager.h"
 #include "Core/CoreInterface.h"

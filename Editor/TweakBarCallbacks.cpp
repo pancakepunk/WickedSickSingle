@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "EditorPrecompiled.h"
 #include "TweakBarCallbacks.h"
 #include "ObjectFactory/ObjectFactoryInterface.h"
@@ -53,6 +54,10 @@ namespace WickedSick
     else if(type == FindType(PhysicsComponent))
     {
       return (char*) object->GetComponent(CT_PhysicsComponent);
+    }
+    else if(type == FindType(DemoComponent))
+    {
+      return (char*) object->GetComponent(CT_DemoComponent);
     }
     return nullptr;
   }
@@ -179,7 +184,11 @@ namespace WickedSick
 
   TwType FindTwType(Reflection::Metadata * data)
   {
-    if(data == FindType(int))
+    if(!data->GetEnumConstants().empty())
+    {
+      return TW_TYPE_INT32;
+    }
+    else if(data == FindType(int))
     {
       return TW_TYPE_INT32;
     }
@@ -194,14 +203,6 @@ namespace WickedSick
     else if(data == FindType(std::string))
     {
       return TW_TYPE_STDSTRING;
-    }
-    else if(data == FindType(LightType::Enum))
-    {
-      return TW_TYPE_INT32;
-    }
-    else if(data == FindType(DrawType::Enum))
-    {
-      return TW_TYPE_INT32;
     }
 
     return TW_TYPE_UNDEF;

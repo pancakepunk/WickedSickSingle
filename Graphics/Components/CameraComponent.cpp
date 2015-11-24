@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "CameraComponent.h"
 #include "Input/InputInterface.h"

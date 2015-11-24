@@ -49,9 +49,11 @@ namespace WickedSick
     MetaDef;
     Dir();
     Vector3 ambientIntensity;
+    float pad0;
     Vector3 diffuseIntensity;
+    float pad1;
     Vector3 specularIntensity;
-
+    float pad2;
     Vector3 direction;
     //32bytes
   };

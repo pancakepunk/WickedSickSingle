@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 //
 #include "meta/Function/Function.h"
 namespace Reflection

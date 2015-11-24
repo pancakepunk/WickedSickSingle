@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "PhysicsPrecompiled.h"
 #include "PhysicsScene.h"
 
@@ -63,6 +64,10 @@ namespace WickedSick
     Vector3 Position2;
     RigidBody* first;
     RigidBody* second;
+    if(rigid_bodies_.empty())
+    {
+      return;
+    }
     for(auto bodyit = rigid_bodies_.begin(); bodyit != rigid_bodies_.end() - 1; ++bodyit)
     {
       first = (*bodyit);

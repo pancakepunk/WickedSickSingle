@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 #include "DxShader.h"
 #include "D3D/DXIncludes.h"
@@ -16,14 +17,13 @@ namespace WickedSick
 {
 
   DxShader::DxShader(const std::string& name,
-                     ShaderCallback callback,
-                     bool indexed) 
-                      : vertex_shader_(nullptr),
-                        pixel_shader_(nullptr),
-                        compute_shader_(nullptr),
-                        geometry_shader_(nullptr),
-                        layout_(nullptr),
-                        Shader(name, callback, indexed)
+                     ShaderCallback callback) 
+  : vertex_shader_(nullptr),
+    pixel_shader_(nullptr),
+    compute_shader_(nullptr),
+    geometry_shader_(nullptr),
+    layout_(nullptr),
+    Shader(name, callback)
   {
 
   }
@@ -127,7 +127,7 @@ namespace WickedSick
       {
         __debugbreak();
       }
-      texView = (ID3D11ShaderResourceView*)textures_[i]->GetTexturePointer();
+      texView = (ID3D11ShaderResourceView*)textures_[i]->GetResourcePointer();
       context->PSSetShaderResources(i, 1, &texView);
     }
 
@@ -498,14 +498,9 @@ namespace WickedSick
     context->PSSetSamplers(0, 1, &tex_sampler_state_);
     context->VSSetShader(vertex_shader_, NULL, 0);
     context->PSSetShader(pixel_shader_, NULL, 0);
-    if(indexed_)
-    {
-      context->DrawIndexed(count, 0, 0);
-    }
-    else
-    {
-      context->Draw(count, 0);
-    }
+
+    context->Draw(count, 0);
+
     
   }
 

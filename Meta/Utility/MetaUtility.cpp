@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 //
 #include "meta/Utility/MetaUtility.h"
 #include "meta/Utility/MetaMacros.h"

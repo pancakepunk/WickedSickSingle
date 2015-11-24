@@ -19,11 +19,12 @@ namespace WickedSick
     Vector4 Velocity;
     Vector4 Color;
     Vector4 Scale;
+    Vector4 PrevPos;//runtime data
     float Rotation;
     float Lifetime;
-
-    Vector4 PrevPos;//runtime data
     float TimePassed;
+    float temp;
+
     ParticleDescription operator+(const ParticleDescription& rhs);
     ParticleDescription operator-(const ParticleDescription& rhs);
     ParticleDescription operator-();

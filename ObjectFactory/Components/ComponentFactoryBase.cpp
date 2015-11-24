@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "ObjectFactoryPrecompiled.h"
 #include "ComponentFactoryBase.h"
 

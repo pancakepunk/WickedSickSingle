@@ -1,6 +1,5 @@
+#include "Precompiled.h"
 
-#include <vector>
-#include <unordered_map>
 #include "meta/Lua/ScriptManager.h"
 #include "meta/Lua/Script.h"
 

@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "ParticleDescription.h"
 
 namespace WickedSick

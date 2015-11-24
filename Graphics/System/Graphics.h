@@ -49,9 +49,12 @@ namespace WickedSick
     Model* LoadModel(const std::string& model);
     Texture* GetTexture(const std::string& tex);
     Texture* LoadTexture(const std::string& tex);
+    Texture* LoadBumpMap(const std::string& map);
+
+    ParticleManager* GetParticleManager();
+
     void AddShader(const std::string& name, 
-                                   Shader::ShaderCallback callback, 
-                                   bool indexed = true);
+                   Shader::ShaderCallback callback);
 
     void RecompileShaders();
 
@@ -101,6 +104,9 @@ namespace WickedSick
     HashMap<std::string, Renderable> renderables_;//basically buffers that don't have associated models
     HashMap<std::string, Shader*> shaders_;
     HashMap<std::string, Texture*> textures_;
+
+    std::vector<RenderTarget*> render_targets_;
+
 
     std::vector<Vertex> debug_lines_;
     Buffer* debug_buffer_;    

@@ -8,7 +8,6 @@ namespace WickedSick
   struct Renderable
   {
     Renderable();
-    Buffer* indexBuf;
     Buffer* vertBuf;
   };
 }

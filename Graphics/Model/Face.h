@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vertex.h"
-#include <vector>
+
 
 namespace WickedSick
 {

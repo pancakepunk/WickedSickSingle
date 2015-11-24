@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility>
+
 #include <type_traits>
 
 #ifdef _DEBUG

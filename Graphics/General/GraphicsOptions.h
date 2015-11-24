@@ -9,7 +9,7 @@ namespace WickedSick
   {
     GraphicsOptions(bool     vSync = false,
                     const Vector2i& resolution = Vector2i(1200, 720),
-                    const Vector4&  clearColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f),
+                    const Vector4&  clearColor = Vector4(0.0f, 0.0f, 1.0f, 1.0f),
                     APIType::Enum  api = APIType::DirectX);
 
 

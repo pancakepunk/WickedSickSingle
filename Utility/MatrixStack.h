@@ -3,7 +3,7 @@
 #include "Math/MathInterface.h"
 
 
-#include <vector>
+
 
 namespace WickedSick
 {

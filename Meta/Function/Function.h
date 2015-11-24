@@ -7,7 +7,6 @@
 #include "meta/Utility/IndexSequence.h"
 #include "meta/Utility/IndirectionCount.h"
 #include "meta/Utility/SimplifyType.h"
-#include <vector>
 
 
 #define ARGTYPE_FINAL(arg) typedef SIMPLIFY_TYPE<arg> arg##Final

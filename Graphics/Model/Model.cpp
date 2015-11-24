@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "GraphicsPrecompiled.h"
 
 #include "Model.h"
@@ -9,7 +10,7 @@
 
 #include "Buffer/DxBuffer.h"
 
-#include <fstream>
+
 
 
 namespace WickedSick
@@ -23,21 +24,15 @@ namespace WickedSick
 
   }
 
-  void Model::Set(const std::vector<Vertex>& vertexList,
-                  const std::vector<Face>&   faceList)  
+  void Model::Set(const std::vector<Vertex>& vertexList)  
   {
     vertex_list_ = vertexList;
-    face_list_ = faceList;
   }
 
-  int Model::GetNumIndices()
-  {
-    return face_list_.size() * 3;
-  }
 
   int Model::GetNumFaces()
   {
-    return face_list_.size();
+    return vertex_list_.size() / 3;
   }
 
   int Model::GetNumVerts()
@@ -67,105 +62,50 @@ namespace WickedSick
     return vertex_list_;
   }
 
-  std::vector<Face>& Model::GetFaces()
-  {
-    return face_list_;
-  }
 
   std::vector<ModelComponent*>& Model::GetInstances()
   {
     return instance_list_;
   }
 
-  void Model::MapTextureCoords(MappingType::Enum type)
+
+  Vector2 computeTexCylindrical(const Vertex& vert, const Vector3& minimum, const Vector3& maximum)
   {
-    switch(type)
+    Vector2 tex;
+    if((vert.position.x == vert.position.z) && (vert.position.x == 0.0f))
     {
-      case MappingType::Planar:
-      {
-        Vector3 minimum( FLT_MAX, FLT_MAX, FLT_MAX);
-        Vector3 maximum = -minimum;
-        for(auto& it : vertex_list_)
-        {
-          if(it.position.x < minimum.x){minimum.x = it.position.x;}
-          if(it.position.y < minimum.y){minimum.y = it.position.y;}
-          if(it.position.z < minimum.z){minimum.z = it.position.z;}
-
-          if(it.position.x > maximum.x){maximum.x = it.position.x;}
-          if(it.position.y > maximum.y){maximum.y = it.position.y;}
-          if(it.position.z > maximum.z){maximum.z = it.position.z;}
-        }
-
-        Vector3 fullDiff = maximum - minimum;
-        float largestGap = std::max(fullDiff.x, fullDiff.y);
-        Vector3 diff;
-        for(auto& it : vertex_list_)
-        {
-          diff = it.position - minimum;
-          diff.x /= largestGap;
-          diff.y /= largestGap;
-          it.tex.x = diff.x;
-          it.tex.y = -diff.y;
-        }
-        break;
-      }
-      case MappingType::Cylindrical:
-      {
-        Vector3 minimum(FLT_MAX, FLT_MAX, FLT_MAX);
-        Vector3 maximum = -minimum;
-        for(auto& it : vertex_list_)
-        {
-          if(it.position.x < minimum.x)
-          {
-            minimum.x = it.position.x;
-          }
-          if(it.position.y < minimum.y)
-          {
-            minimum.y = it.position.y;
-          }
-          if(it.position.z < minimum.z)
-          {
-            minimum.z = it.position.z;
-          }
-
-          if(it.position.x > maximum.x)
-          {
-            maximum.x = it.position.x;
-          }
-          if(it.position.y > maximum.y)
-          {
-            maximum.y = it.position.y;
-          }
-          if(it.position.z > maximum.z)
-          {
-            maximum.z = it.position.z;
-          }
-        }
-
-        Vector3 fullDiff = maximum - minimum;
-        float largestGap = std::max(fullDiff.x, fullDiff.y);
-        Vector3 diff;
-        for(auto& it : vertex_list_)
-        {
-          diff = it.position - minimum;
-          diff.x /= largestGap;
-          diff.y /= largestGap;
-          it.tex.x = diff.x;
-          it.tex.y = -diff.y;
-        }
-        break;
-      }
-      default:
-        break;
+      tex.x = 0.0f;
+    }
+    else
+    {
+      tex.x = (std::atan(vert.position.z / vert.position.x) + (PI / 2.0f)) / PI;
     }
 
-    if(buffers_.vertBuf || buffers_.indexBuf)
-    {
-      ReInitBuffers();
-    }
-    
 
+    tex.y = (vert.position.y - minimum.y) / (maximum.y - minimum.y);
+    return tex;
+  }
+
+  Vector2 computeTexSpherical(const Vertex& vert, const Vector3& minimum, const Vector3& maximum)
+  {
+    Vector2 tex;
+    float r = vert.position.Length();
     
+    if((vert.position.x == vert.position.z) && (vert.position.x == 0.0f))
+    {
+      tex.x = 0.0f;
+    }
+    else
+    {
+      tex.x = (std::atan(vert.position.z / vert.position.x) + (PI / 2.0f)) / PI;
+      tex.y = std::acos(vert.position.y / r) / PI;
+    }
+
+    return tex;
+  }
+
+  void Model::ComputeTangents(MappingType::Enum type)
+  {
 
   }
 

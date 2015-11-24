@@ -4,8 +4,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 main(PixelInputType input) : SV_TARGET1
+float4 main(PixelInputType input) : SV_TARGET
 {
   float4 texColor = textureArray[0].Sample(sampleType, input.tex);
-  return input.color;
+  return input.color * texColor;
 }

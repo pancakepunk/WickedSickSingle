@@ -1,8 +1,8 @@
-//
+#include "Precompiled.h"//
 #include "meta/Definitions/ExternalTypes.h"
 
 #include "meta/Function/Function.h"
-#include <string>
+
 RegisterExternalType(std, string)
   //RegisterConstructor("default");
   //RegisterConstructor("copy", std::string);

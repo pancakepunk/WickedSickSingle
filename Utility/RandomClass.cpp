@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "RandomClass.h"
 #include "Core/CoreInterface.h"
 namespace WickedSick

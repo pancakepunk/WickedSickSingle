@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 
 #include "meta/Utility/IndirectionCount.h"
 namespace Reflection

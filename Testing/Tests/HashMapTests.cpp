@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "TestingPrecompiled.h"
 #include "HashMapTests.h"
 

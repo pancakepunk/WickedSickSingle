@@ -1,8 +1,5 @@
 #pragma once
 
-
-#include <string>
-
 namespace WickedSick
 {
   class GameObject;
@@ -20,7 +17,7 @@ namespace WickedSick
     
 
     Component(ComponentType type = CT_Count, 
-                          GameObject* owner = nullptr);
+              GameObject* owner = nullptr);
     virtual ~Component();
 
     virtual void Initialize() = 0;

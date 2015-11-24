@@ -13,6 +13,8 @@ struct PixelInputType
 float4 main(PixelInputType input) : SV_TARGET
 {
   float4 sampleColor = textureArray[0].Sample(sampleType, input.tex);
-  sampleColor.w = 1;
+  //sampleColor.w = 0;
+  //float minusthatshit = 0.05;
+  //sampleColor -= float4(minusthatshit, minusthatshit, minusthatshit, 0.0);
   return input.color * sampleColor;
 }

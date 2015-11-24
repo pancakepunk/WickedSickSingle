@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 
 #include "EditorPrecompiled.h"
 #include "Editor.h"
@@ -206,6 +207,11 @@ namespace WickedSick
           case CT_ModelComponent:
           {
             meta = Reflection::MetaSingleton<ModelComponent>::Get();
+            break;
+          }
+          case CT_DemoComponent:
+          {
+            meta = Reflection::MetaSingleton<DemoComponent>::Get();
             break;
           }
           default:

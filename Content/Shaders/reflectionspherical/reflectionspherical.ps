@@ -1,0 +1,65 @@
+#include "../common/inputtypes/pixellightingpsinput.fx"
+
+
+#include "../common/lightingHelpers.fx"
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 posWS = input.positionWorld;
+  float3 fullView = cameraPos - posWS.xyz;
+  float  viewLen = length(fullView);
+  float3 view = fullView/viewLen;
+  
+  float fogScalar = calcFog(fogNear, fogFar, viewLen);
+  float4 globalAmbient = globalAmbientColor * globalAmbientIntensity;
+
+  float4 emissive = emissiveColor * emissiveConstant;
+  float2 tex;
+  float3 reflection = reflect(view, input.normal.xyz);
+  tex.x = atan(reflection.z / reflection.x);
+  float r = length(reflection);
+  tex.y = acos(reflection.y /r);
+
+  float4 texColor = textureArray[0].Sample(sampleType, tex);
+  float4 finalColor = float4(0.0,0.0,0.0,1.0);
+  
+  finalColor += emissive;
+
+  finalColor += sumDirLightsBlinn(texColor, input.normal.xyz, view);
+  finalColor += sumPointLightsBlinn(texColor, input.normal.xyz, view, posWS.xyz);
+  finalColor += sumSpotLightsBlinn(texColor, input.normal.xyz, view, posWS.xyz);
+  finalColor += globalAmbient;
+
+  finalColor = (fogScalar * finalColor) + ((1.0-fogScalar)*fogColor);
+
+
+  //finalColor *= 0.00001;
+  //finalColor += textureArray[0].Sample(sampleType, input.tex);
+  //finalColor.x += input.tex.x;
+  //finalColor.y += input.tex.y;
+  //finalColor.z = 0.0f;
+  //if(input.tex.x < 0.01)
+  //{
+  //  finalColor.x = 1.0;
+  //  finalColor.y = 0.0;
+  //  finalColor.z = 0.0;
+  //}
+  //if(input.normal.x < 0.0)
+  //if(input.tex.x > 0.99)
+  {
+    //finalColor.x = 0.0;
+    //finalColor.y = 1.0;
+    //finalColor.z = 0.0;
+  }
+
+  //if(input.tex.y == 1.0)
+  //{
+  //  finalColor.y = 0.0;
+  //}
+  return finalColor;
+
+  
+}

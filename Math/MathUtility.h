@@ -21,5 +21,18 @@ namespace WickedSick
 
   Matrix4 CrossProductMatrix(const Vector3& n);
   Matrix4 TensorProductMatrix(const Vector3& n);
+  template <typename T>
+  T Mod(T target, T mod)
+  {
+    while(target >= mod)
+    {
+      target -= mod;
+    }
+    while(target < 0)
+    {
+      target += mod;
+    }
+    return target;
+  }
 }
 

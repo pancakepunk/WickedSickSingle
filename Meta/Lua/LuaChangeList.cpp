@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 
 //
 #include "meta/Lua/LuaChangeList.h"

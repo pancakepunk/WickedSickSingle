@@ -1,3 +1,4 @@
+#include "Precompiled.h"
 #include "CorePrecompiled.h"
 #include "Component.h"
 #include "Debugging/DebugInterface.h"
