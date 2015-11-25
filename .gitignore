@@ -230,4 +230,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 *.filters
-*.bin
+#*.bin
+Content/Models/smoothdragon.bin
+Content/Models/smoothhorse.bin
+Content/Models/dragon.bin
+Content/Models/horse.bin
