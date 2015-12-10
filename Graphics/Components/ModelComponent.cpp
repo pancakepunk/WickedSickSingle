@@ -13,8 +13,7 @@ namespace WickedSick
 {
   ModelComponent::ModelComponent(const std::string& model,
                                  GameObject* owner)
-  : name_("ModelComponent"),
-    model_(model),
+  : model_(model),
     base_(nullptr),
     draw_type_(DrawType::Default),
     Component(CT_ModelComponent, owner)
@@ -61,6 +60,16 @@ namespace WickedSick
     }
 
 
+  }
+
+  void ModelComponent::Clone(Component * source)
+  {
+    ModelComponent* modelComp = (ModelComponent*)source;
+    material_props_ = modelComp->material_props_;
+    model_ = modelComp->model_;
+    shader_ = modelComp->shader_;
+    texture_ = modelComp->texture_;
+    base_ = modelComp->base_;
   }
 
   void ModelComponent::Destroy()

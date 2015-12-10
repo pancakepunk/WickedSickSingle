@@ -56,6 +56,14 @@ namespace WickedSick
     }
   }
 
+  void LightComponent::Clone(Component * source)
+  {
+    LightComponent* lightComp = (LightComponent*)source;
+    light_type_ = lightComp->light_type_;
+    info_ = lightComp->info_;
+    dirty_ = lightComp->dirty_;
+  }
+
 
   LightInfo& LightComponent::GetInfo()
   {
@@ -116,6 +124,12 @@ namespace WickedSick
   LightInfo::LightInfo(LightInfo && rhs)
   {
     memcpy(this, &rhs, sizeof(LightInfo));
+  }
+
+  LightInfo & LightInfo::operator=(const LightInfo & rhs)
+  {
+    new (this) LightInfo(rhs);
+    return *this;
   }
 
 

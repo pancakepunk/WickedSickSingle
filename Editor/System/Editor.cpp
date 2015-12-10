@@ -9,16 +9,25 @@
 #include "Physics/PhysicsInterface.h"
 #include "TweakBarCallbacks.h"
 
+
 namespace WickedSick
 {
-  Editor::Editor() : System(ST_Editor)
+  Editor::Editor() 
+  : System(ST_Editor),
+    show_particle_editor_(false),
+    particle_editor_(nullptr),
+    selected_id_(0),
+    archetype_index_(0),
+    archetype_enum_((TwType)0),
+    object_ui_(nullptr),
+    scene_ui_(nullptr)
   {
-
+    particle_editor_ = new ParticleEditor();
   }
 
   Editor::~Editor()
   {
-
+    delete particle_editor_;
   }
 
   bool Editor::Load()
@@ -34,7 +43,7 @@ namespace WickedSick
 
   void Editor::Initialize()
   {
-
+    particle_editor_->Initialize();
     
     //create UI
     //archetype_to_clone_ = "box";
@@ -73,6 +82,7 @@ namespace WickedSick
       scene_ui_ = TwNewBar("Scene Editor");
       //TwAddButton(scene_ui_, "Create New Object", &NewObjectCallback, &archetype_to_clone_, "");
       TwAddVarCB(scene_ui_, "Object ID", TW_TYPE_INT32, SetTwSelected, GetTwSelected, nullptr, " min=0 max=500 ");
+      TwAddButton(scene_ui_, "Particle System Editor", &ToggleParticleEditor, &show_particle_editor_, "");
 
 
       // Defining season enum type
@@ -87,6 +97,7 @@ namespace WickedSick
       TwAddVarRW(scene_ui_, "FogFar", TW_TYPE_FLOAT, &sceneConstants.fogFar, NULL);
       TwAddVarRW(scene_ui_, "FogNear", TW_TYPE_FLOAT, &sceneConstants.fogNear, NULL);
       TwAddVarRW(scene_ui_, "Rotate", TW_TYPE_BOOLCPP, &sceneConstants.rotate, NULL);
+      
 
       object_ui_ = TwNewBar("Object Editor");
       Select(selected_id_);
@@ -94,7 +105,10 @@ namespace WickedSick
       TwCopyStdStringToClientFunc(CopyStdStringToClient);
       once = false;
     }
-    
+    if(show_particle_editor_)
+    {
+      particle_editor_->Update(dt);
+    }
 
     archetype_to_clone_ = archetypeEnums[archetype_index_].Label;
   }
@@ -130,7 +144,7 @@ namespace WickedSick
       }
       
     }
-    per_object_info_.push_back(new CallbackInfo(cbInfo));
+    per_object_info_.push_back(CallbackInfo(cbInfo));
     std::string fullName;
     for(size_t i = 0; i < cbInfo.members.size(); ++i)
     {
@@ -149,7 +163,7 @@ namespace WickedSick
                  FindTwType(cbInfo.members.back()->GetType()),
                  TweakBarSetString,
                  TweakBarGetString,
-                 per_object_info_.back(),
+                 &per_object_info_.back(),
                  tweakVars.c_str());
     }
     else
@@ -160,7 +174,7 @@ namespace WickedSick
                  FindTwType(cbInfo.members.back()->GetType()),
                  TweakBarSet,
                  TweakBarGet,
-                 per_object_info_.back(),
+                 &per_object_info_.back(),
                  tweakVars.c_str());
     }
     
@@ -174,14 +188,12 @@ namespace WickedSick
     ObjectFactory* fact = (ObjectFactory*) Engine::GetCore()->GetSystem(ST_ObjectFactory);
     GameObject* newObject = fact->GetObject(selected_id_);
     TwRemoveAllVars(object_ui_);
-    for(auto& it : per_object_info_)
-    {
-      delete it;
-    }
+
     per_object_info_.clear();
+    //per_object_info_.reserve(200);
     
     CallbackInfo tempInfo;
-    Reflection::Metadata* meta;
+    Reflection::Metadata* meta = nullptr;
     if(newObject)
     {
       for(auto& it : newObject->GetComponents())
@@ -214,13 +226,31 @@ namespace WickedSick
             meta = Reflection::MetaSingleton<DemoComponent>::Get();
             break;
           }
+
+          case CT_ReflectComponent:
+          {
+            meta = Reflection::MetaSingleton<ReflectComponent>::Get();
+            break;
+          }
+          case CT_ParticleComponent:
+          {
+            TwAddButton(object_ui_,
+                        "Add System",
+                        TweakBarAddSystem,
+                        nullptr,
+                        "group='Particle Component'");
+            break;
+          }
           default:
             continue;
         }
-        tempInfo.baseData = meta;
-        for(auto& it : meta->GetMembers())
+        if(meta)
         {
-          add_members(tempInfo, &it.second);
+          tempInfo.baseData = meta;
+          for(auto& it : meta->GetMembers())
+          {
+            add_members(tempInfo, &it.second);
+          }
         }
         
       }
@@ -273,6 +303,11 @@ namespace WickedSick
   int Editor::GetSelectedId()
   {
     return selected_id_;
+  }
+
+  ParticleEditor * Editor::GetParticleEditor()
+  {
+    return particle_editor_;
   }
 
 }

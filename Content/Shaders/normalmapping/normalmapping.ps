@@ -29,7 +29,8 @@ float4 main(PixelInputType input) : SV_TARGET
 
   float4 emissive = emissiveColor * emissiveConstant;
   float2 tex = input.positionModel.xy;
-
+  tex *= 0.5;
+  tex += float2(0.5, 0.5);
   float4 texColor = textureArray[0].Sample(sampleType, tex);
   float4 finalColor = float4(0.0,0.0,0.0,1.0);
   

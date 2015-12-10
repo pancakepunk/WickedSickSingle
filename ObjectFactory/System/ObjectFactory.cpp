@@ -14,7 +14,7 @@
 
 
 
-
+ 
 
 namespace WickedSick
 {
@@ -87,9 +87,9 @@ namespace WickedSick
       
       newObject->SetID(objects_created_++);
       game_objects_.insert(std::make_pair(newObject->GetID(), newObject));
-      newObject->Activate();
       newObject->SetArchetypeName(name);
       newObject->Initialize();
+      newObject->Activate();
     }
     return newObject;
   }
@@ -129,18 +129,26 @@ namespace WickedSick
     ComponentFactory<ParticleComponent>* particleFactory = (ComponentFactory<ParticleComponent>*)comp_manager_->GetFactory("ParticleComponent");
     ComponentFactory<CameraController>* controllerFactory = (ComponentFactory<CameraController>*)comp_manager_->GetFactory("CameraController");
     ComponentFactory<CameraComponent>* cameraFactory = (ComponentFactory<CameraComponent>*)comp_manager_->GetFactory("CameraComponent");
+    ComponentFactory<SkyboxComponent>* skyboxFactory = (ComponentFactory<SkyboxComponent>*)comp_manager_->GetFactory("SkyboxComponent");
+    ComponentFactory<ReflectComponent>* relfectFactory = (ComponentFactory<ReflectComponent>*)comp_manager_->GetFactory("ReflectComponent");
 
     
+
+    modelFactory->AddArchetype("reflectbox", Archetype<ModelComponent>("reflectbox"));
     modelFactory->AddArchetype("bunny", Archetype<ModelComponent>("bunny"));
     modelFactory->AddArchetype("box", Archetype<ModelComponent>("box"));
+    modelFactory->AddArchetype("skybox", Archetype<ModelComponent>("skybox"));
     modelFactory->AddArchetype("sphere", Archetype<ModelComponent>("sphere"));
     modelFactory->AddArchetype("plane", Archetype<ModelComponent>("plane"));
     modelFactory->AddArchetype("dirLight", Archetype<ModelComponent>("dirLight"));
     
     demoFactory->AddArchetype("box", Archetype<DemoComponent>("box"));
+    demoFactory->AddArchetype("reflectbox", Archetype<DemoComponent>("reflectbox"));
+    demoFactory->AddArchetype("skybox", Archetype<DemoComponent>("skybox"));
 
     physicsFactory->AddArchetype("bunny", Archetype<PhysicsComponent>("bunny"));
     physicsFactory->AddArchetype("box", Archetype<PhysicsComponent>("box"));
+    physicsFactory->AddArchetype("skybox", Archetype<PhysicsComponent>("skybox"));
     physicsFactory->AddArchetype("sphere", Archetype<PhysicsComponent>("sphere"));
 
 
@@ -148,6 +156,8 @@ namespace WickedSick
     lightFactory->AddArchetype("dirLight", Archetype<LightComponent>("dirLight"));
 
     cameraFactory->AddArchetype("camera", Archetype<CameraComponent>("camera"));
+
+    skyboxFactory->AddArchetype("skybox", Archetype<SkyboxComponent>("skybox"));
 
     controllerFactory->AddArchetype("camera", Archetype<CameraController>("camera"));
 
@@ -157,12 +167,13 @@ namespace WickedSick
     object_factory_.AddArchetype("bunny", Archetype<GameObject>("bunny"));
     object_factory_.AddArchetype("plane", Archetype<GameObject>("plane"));
     object_factory_.AddArchetype("box", Archetype<GameObject>("box"));
+    object_factory_.AddArchetype("reflectbox", Archetype<GameObject>("reflectbox"));
+    object_factory_.AddArchetype("skybox", Archetype<GameObject>("skybox"));
     object_factory_.AddArchetype("camera", Archetype<GameObject>("camera"));
     object_factory_.AddArchetype("sphere", Archetype<GameObject>("sphere"));
     object_factory_.AddArchetype("fire", Archetype<GameObject>("fire"));
 
-    
-
+    relfectFactory->AddArchetype("reflectbox", Archetype<ReflectComponent>("reflectbox"));
 
 
     
@@ -185,6 +196,14 @@ namespace WickedSick
     Archetype<ModelComponent>& cubeCompType = modelFactory->GetArchetype("box");
     ModelComponent& cubeModelComp = cubeCompType.GetBase();
     cubeModelComp.SetModel("box");
+
+    Archetype<ModelComponent>& skyboxCompType = modelFactory->GetArchetype("skybox");
+    ModelComponent& skyboxModelComp = skyboxCompType.GetBase();
+    skyboxModelComp.SetModel("skybox");
+
+    Archetype<ModelComponent>& reflectboxCompType = modelFactory->GetArchetype("reflectbox");
+    ModelComponent& reflectboxModelComp = reflectboxCompType.GetBase();
+    reflectboxModelComp.SetModel("box");
     
     Archetype<ModelComponent>& sphereCompType = modelFactory->GetArchetype("sphere");
     ModelComponent& sphereModelComp = sphereCompType.GetBase();
@@ -217,6 +236,7 @@ namespace WickedSick
 
     fireParticleComp.AddParticleSystem(sysToClone);
     EmitterDescription emitterDesc;
+    emitterDesc.maxParticles = 1000;
     emitterDesc.emitLength = 0.05f;
     emitterDesc.frequency = 0.1f;
     emitterDesc.lazy = false;
@@ -225,56 +245,56 @@ namespace WickedSick
     emitterDesc.sourceModel = "quad";
     emitterDesc.sourceTexture = "feather";
     emitterDesc.spawnPos = Vector3(0.0f, 1.0f, 0.0f);
-    ParticleEmitter* emitter = particleManager->MakeParticleEmitter(1000, emitterDesc);
+    ParticleEmitter* emitter = particleManager->MakeParticleEmitter(emitterDesc);
 
     ParticleDescription states[3];
-    states[0] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                    Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+    states[0] = ParticleDescription(Vector3(0.0f, 5.0f, 0.0f),
+                                    Vector3(0.0f, 1.0f, 0.0f),
                                     Vector4(1.0f, 1.0f, 1.0f, 0.5f),
-                                    Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                                    Vector3(0.5f, 0.5f, 0.5f),
                                     0.0f,
                                     2.0f);
-    states[1] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                    Vector4(0.0f, 0.5f, 0.0f, 1.0f),
+    states[1] = ParticleDescription(Vector3(0.0f, 5.0f, 0.0f),
+                                    Vector3(0.0f, 0.5f, 0.0f),
                                     Vector4(1.0f, 0.25f, 0.25f, 0.5f),
-                                    Vector4(0.25f, 0.25f, 0.25f, 0.0f),
+                                    Vector3(0.25f, 0.25f, 0.25f),
                                     0.0f,
                                     2.0f);
 
-    states[2] = ParticleDescription(Vector4(0.0f, 5.0f, 0.0f, 1.0f),
-                                    Vector4(0.0f, 0.25f, 0.0f, 1.0f),
+    states[2] = ParticleDescription(Vector3(0.0f, 5.0f,  0.0f),
+                                    Vector3(0.0f, 0.25f, 0.0f),
                                     Vector4(1.0f, 1.0f, 0.1f, 0.5f),
-                                    Vector4(0.05f, 0.05f, 0.05f, 0.0f),
+                                    Vector3(0.05f, 0.05f, 0.05f),
                                     0.0f,
                                     2.0f);
 
 
     ParticleDescription variance[3];
-    variance[0] = ParticleDescription(Vector4(0.1f, 0.25f, 0.1f, 0.0f),
-                                      Vector4(0.25f, 0.25f, 0.25f, 1.0f),
+    variance[0] = ParticleDescription(Vector3(0.1f, 0.25f, 0.1f),
+                                      Vector3(0.25f, 0.25f, 0.25f),
                                       Vector4(),
-                                      Vector4(),
+                                      Vector3(),
                                       0.0f,
                                       0.1f);
-    variance[1] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
-                                      Vector4(0.25f, 0.25f, 0.25f, 1.0f),
+    variance[1] = ParticleDescription(Vector3(0.1f, 0.1f, 0.1f),
+                                      Vector3(0.25f, 0.25f, 0.25f),
                                       Vector4(),
-                                      Vector4(),
+                                      Vector3(),
                                       0.0f,
                                       0.1f);
 
-    variance[2] = ParticleDescription(Vector4(0.1f, 0.1f, 0.1f, 1.0f),
-                                      Vector4(0.1f, 0.1f, 0.1f, 1.0f),
+    variance[2] = ParticleDescription(Vector3(0.1f, 0.1f, 0.1f),
+                                      Vector3(0.1f, 0.1f, 0.1f),
                                       Vector4(),
-                                      Vector4(),
+                                      Vector3(),
                                       0.0f,
                                       0.1f);
 
     emitter->AddParticleState(states[0], variance[0]);
     emitter->AddParticleState(states[1], variance[1]);
     emitter->AddParticleState(states[2], variance[2]);
-    emitter->RegisterAttribute("Velocity");
-    emitter->RegisterAttribute("Lifetime");
+    //emitter->RegisterAttribute("Velocity");
+    //emitter->RegisterAttribute("Lifetime");
     emitter->RegisterAttribute("Color");
     emitter->RegisterAttribute("Scale");
 
@@ -283,120 +303,7 @@ namespace WickedSick
     
 
     
-    //init light comps
-    Archetype<GameObject>& dirLight = object_factory_.GetArchetype("dirLight");
-    GameObject& dirLightObject = dirLight.GetBase();
-    Component* lightComp = comp_manager_->CreateComponent("LightComponent",
-                                                          "dirLight",
-                                                          &dirLightObject);
-    dirLightObject.AddComponent(lightComp);
 
-    Component* lightModelComp = comp_manager_->CreateComponent("ModelComponent",
-                                                               "dirLight",
-                                                               &dirLightObject);
-    dirLightObject.AddComponent(lightModelComp);
-
-
-
-
-    //init bunny comps
-    Archetype<GameObject>& bunny = object_factory_.GetArchetype("bunny");
-    GameObject& bunnyObject = bunny.GetBase();
-    Component* bunnyComp = comp_manager_->CreateComponent("ModelComponent", 
-                                                          "bunny", 
-                                                          &bunnyObject);
-    bunnyObject.AddComponent(bunnyComp);
-    Component* bunnyPhysicsComp = comp_manager_->CreateComponent( "PhysicsComponent",
-                                                                  "bunny",
-                                                                  &bunnyObject);
-    bunnyObject.AddComponent(bunnyPhysicsComp);
-
-
-
-
-    //init plane comps
-    Archetype<GameObject>& plane = object_factory_.GetArchetype("plane");
-    GameObject& planeObject = plane.GetBase();
-    Component* planeComp = comp_manager_->CreateComponent("ModelComponent",
-                                                          "plane",
-                                                          &planeObject);
-
-
-    
-
-    
-    
-
-
-    //init cube comps
-    Archetype<GameObject>& cube = object_factory_.GetArchetype("box");
-    GameObject& cubeObject = cube.GetBase();
-    Component* cubeComp = comp_manager_->CreateComponent( "ModelComponent",
-                                                          "box",
-                                                          &cubeObject);
-    cubeObject.AddComponent(cubeComp);
-
-    
-    Component* cubePhysicsComp = comp_manager_->CreateComponent("PhysicsComponent",
-                                                                "box",
-                                                                &cubeObject);
-    cubeObject.AddComponent(cubePhysicsComp);
-
-    Component* cubeDemoComp = comp_manager_->CreateComponent("DemoComponent",
-                                                             "box",
-                                                             &cubeObject);
-    cubeObject.AddComponent(cubeDemoComp);
-
-
-
-    
-    
-
-    //init sphere comps
-    Archetype<GameObject>& sphere = object_factory_.GetArchetype("sphere");
-    GameObject& sphereObject = sphere.GetBase();
-    Component* sphereComp = comp_manager_->CreateComponent("ModelComponent",
-                                                           "sphere",
-                                                           &sphereObject);
-    sphereObject.AddComponent(sphereComp);
-
-    Component* spherePhysicsComp = comp_manager_->CreateComponent("PhysicsComponent",
-                                                                  "sphere",
-                                                                  &sphereObject);
-    sphereObject.AddComponent(spherePhysicsComp);
-
-    //Component* sphereOrbitComp = comp_manager_->CreateComponent("OrbitComponent",
-    //                                                            "sphere",
-    //                                                            &sphereObject);
-    //sphereObject.AddComponent(sphereOrbitComp);
-
-
-    
-
-
-
-    
-    //init camera comps
-    Archetype<GameObject>& camera = object_factory_.GetArchetype("camera");
-    GameObject& cameraObject = camera.GetBase();
-    Component* cameraComp = comp_manager_->CreateComponent("CameraComponent",
-                                                           "camera",
-                                                           &cameraObject);
-    cameraObject.AddComponent(cameraComp);
-
-    Component* cameraController = comp_manager_->CreateComponent("CameraController",
-                                                                 "camera",
-                                                                 &cameraObject);
-    cameraObject.AddComponent(cameraController);
-
-
-    //init particle comps
-    Archetype<GameObject>& particleSys = object_factory_.GetArchetype("fire");
-    GameObject& particleObject = particleSys.GetBase();
-    Component* particleComp = comp_manager_->CreateComponent("ParticleComponent",
-                                                             "fire",
-                                                             &particleObject);
-    particleObject.AddComponent(cameraComp);
 
     
 
@@ -408,7 +315,7 @@ namespace WickedSick
     GameObject* camera = CloneArchetype("camera");
     Transform* cameraTr = (Transform*)camera->GetComponent(CT_Transform);
     cameraTr->SetRotation(0.0f, PI / 4.0f, 0.0f);
-    cameraTr->SetPosition(0.0f, 10.0f, 10.0f);
+    cameraTr->SetPosition(0.0f, 10.0f, -10.0f);
     CameraComponent* cameraComp = (CameraComponent*)camera->GetComponent(CT_CameraComponent);
 
     
@@ -425,7 +332,7 @@ namespace WickedSick
     GameObject* plane = CloneArchetype("plane");
     Transform* planeTr = (Transform*) plane->GetComponent(CT_Transform);
     //bunnyTr->SetRotation(0.0f, PI/4.0f, 0.0f);
-    planeTr->SetPosition(0.0f, -15.0f, 0.0f);
+    planeTr->SetPosition(0.0f, -18.0f, 0.0f);
     planeTr->SetScale(15.0f);
     ModelComponent* planeModel = (ModelComponent*) plane->GetComponent(CT_ModelComponent);
     planeModel->SetDrawType(DrawType::Default);
@@ -446,49 +353,54 @@ namespace WickedSick
 
 
 
-    //GameObject* fire = CloneArchetype("fire");
-    //Transform* fireTr = (Transform*) fire->GetComponent(CT_Transform);
-    //
-    //fireTr->SetPosition(0.0f, 0.0f, 0.0f);
-    //
-    //ParticleComponent* fireParticle = (ParticleComponent*) fire->GetComponent(CT_ParticleComponent);
-    int asdfasfdfasdfsadf;
+    GameObject* fire = CloneArchetype("fire");
+    Transform* fireTr = (Transform*) fire->GetComponent(CT_Transform);
+    
+    fireTr->SetPosition(0.0f, 0.0f, 0.0f);
+    
+    ParticleComponent* fireParticle = (ParticleComponent*) fire->GetComponent(CT_ParticleComponent);
+
+
+    
 
 
 
 
-    GameObject* bunny = CloneArchetype("box");
-    Transform* bunnyTr = (Transform*)bunny->GetComponent(CT_Transform);
+
+    GameObject* skybox = CloneArchetype("skybox");
+    Transform* skyboxTr = (Transform*) skybox->GetComponent(CT_Transform);
     //bunnyTr->SetRotation(0.0f, PI/4.0f, 0.0f);
-    bunnyTr->SetPosition(0.0f, 4.0f, 0.0f);
-    bunnyTr->SetScale(2.0f);
-    ModelComponent* bunnyModel = (ModelComponent*) bunny->GetComponent(CT_ModelComponent);
-    bunnyModel->SetDrawType(DrawType::Default);
-    bunnyModel->SetShader("pixelblinn");
-    bunnyModel->SetTexture("bettercheckerboard");
-    bunnyModel->SetNormalMap("white");;
-    Material& mat = bunnyModel->GetMaterial();
-    
-    mat.ambientColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-    mat.specularColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    mat.emissiveColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-    mat.diffuseColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    
-    mat.ambientConstant =  0.3f;
-    mat.specularConstant = 1.0f;
-    mat.emissiveConstant = 0.3f;
-    mat.diffuseConstant =  1.0f;
-    mat.shininess = 20.0f;
-    
-    PhysicsComponent* bunnyPhysics = (PhysicsComponent*)bunny->GetComponent(CT_PhysicsComponent);
-    RigidBody* bunnyBody = bunnyPhysics->GetRigidBody();
-    bunnyBody->SetGravityScalar(0.0f);
+    skyboxTr->SetPosition(0.0f, 0.0f, 0.0f);
+    skyboxTr->SetScale(50000.0f);
+    ModelComponent* skyboxModel = (ModelComponent*) skybox->GetComponent(CT_ModelComponent);
+    skyboxModel->SetDrawType(DrawType::Default);
+    skyboxModel->SetShader("skybox");
+    //skyboxModel->SetTexture("bettercheckerboard");
+    //skyboxModel->SetNormalMap("white");
+    Material& skyboxmat = skyboxModel->GetMaterial();
+
+    skyboxmat.ambientColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+    skyboxmat.specularColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+    skyboxmat.emissiveColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+    skyboxmat.diffuseColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    skyboxmat.ambientConstant = 0.3f;
+    skyboxmat.specularConstant = 1.0f;
+    skyboxmat.emissiveConstant = 0.3f;
+    skyboxmat.diffuseConstant = 1.0f;
+    skyboxmat.shininess = 20.0f;
+
+    PhysicsComponent* skyboxPhysics = (PhysicsComponent*) skybox->GetComponent(CT_PhysicsComponent);
+    RigidBody* skyboxBody = skyboxPhysics->GetRigidBody();
+    skyboxBody->SetGravityScalar(0.0f);
+
+
     
     
     Vector3 axis = Vector3(0.0f, 1.0f, 0.0f);
     for(int i = 0; i < 1; ++i)
     {
-      Vector3 fromBunny = Vector3(8.0f, 10.0f, 8.0f);
+      Vector3 fromBunny = Vector3(8.0f, 0.0f, 8.0f);
       GameObject* dirLight = CloneArchetype("dirLight");
       LightComponent* dirLightlight = (LightComponent*) dirLight->GetComponent(CT_LightComponent);
       Transform* tr = (Transform*)dirLight->GetComponent(CT_Transform);

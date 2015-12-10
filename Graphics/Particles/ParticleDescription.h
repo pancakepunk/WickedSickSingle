@@ -8,18 +8,18 @@ namespace WickedSick
   {
     MetaDef;
     ParticleDescription();
-    ParticleDescription(const Vector4 & pPosition,
-                       const Vector4 & vVelocity,
-                       const Vector4 & cColor,
-                       const Vector4 & sScale,
-                       float rRotation,
-                       float lLifetime);
+    ParticleDescription(const Vector3 & pPosition,
+                        const Vector3 & vVelocity,
+                        const Vector4 & cColor,
+                        const Vector3 & sScale,
+                        float rRotation,
+                        float lLifetime);
     //init data
-    Vector4 Position;
-    Vector4 Velocity;
+    Vector3 Position;
+    Vector3 Velocity;
     Vector4 Color;
-    Vector4 Scale;
-    Vector4 PrevPos;//runtime data
+    Vector3 Scale;
+    Vector3 PrevPos;//runtime data
     float Rotation;
     float Lifetime;
     float TimePassed;

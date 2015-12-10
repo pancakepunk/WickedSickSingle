@@ -14,7 +14,7 @@ namespace WickedSick
     DxTexture(const std::vector<unsigned char> & texName,
               const TextureDesc& desc);
     ~DxTexture();
-    void Initialize();
+    void Initialize(void* const& tex2d = nullptr);
     void Cleanup();
     void* GetResourcePointer();
     void* GetTexturePointer();

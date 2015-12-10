@@ -15,4 +15,14 @@ namespace WickedSick
   {
 
   }
+
+  void GraphicsAPI::AddRenderTarget(RenderTarget* target)
+  {
+    current_render_targets_.push_back(target);
+  }
+
+  void GraphicsAPI::ClearRenderTargets()
+  {
+    current_render_targets_.clear();
+  }
 }

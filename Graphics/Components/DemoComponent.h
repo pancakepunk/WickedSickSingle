@@ -48,8 +48,10 @@ namespace WickedSick
       MetaDef;
       DemoComponent();
       ~DemoComponent(); 
-      void Initialize();
-      void Update(float dt);
+      void Initialize() override;
+      void Update(float dt) override;
+      void Clone(Component* source) override;
+
       
       EntityType::Enum GetEntityType();
       MappingType::Enum GetMappingType();

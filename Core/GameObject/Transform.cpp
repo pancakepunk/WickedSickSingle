@@ -42,6 +42,15 @@ namespace WickedSick
     //nothing
   }
 
+  void Transform::Clone(Component * source)
+  {
+    Transform* sourceTr = (Transform*)source;
+    pos_ = sourceTr->pos_;
+    scale_ = sourceTr->scale_;
+    rot_ = sourceTr->rot_;
+
+  }
+
   Vector3 Transform::GetPosition()
   {
     return pos_;

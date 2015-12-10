@@ -94,6 +94,12 @@ namespace WickedSick
   {
   }
 
+  void PhysicsComponent::Clone(Component * source)
+  {
+    PhysicsComponent* physicsComp = (PhysicsComponent*)source;
+    body_.clone(physicsComp->body_);
+  }
+
   void PhysicsComponent::AddCollider(Collider* collider)
   { 
     body_.GetColliders().push_back(collider);

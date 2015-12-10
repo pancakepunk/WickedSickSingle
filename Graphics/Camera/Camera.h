@@ -21,7 +21,7 @@ namespace WickedSick
     Vector3 GetRotation();
     Vector3 GetLookAt();
 
-    void Orient(float dt);
+    void Orient();
     
     void SetSource(CameraComponent* source);
 

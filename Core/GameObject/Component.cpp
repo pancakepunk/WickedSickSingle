@@ -62,6 +62,8 @@ namespace WickedSick
 
   Component * Component::GetSibling(ComponentType type)
   {
+    WSAssert(active_, "inactive component access");
+    WSAssert(owner_, "invalid parent of component");
     return owner_->GetComponent(type);
   }
 

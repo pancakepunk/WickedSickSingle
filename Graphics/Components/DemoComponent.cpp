@@ -75,6 +75,14 @@ namespace WickedSick
     }
   }
 
+  void DemoComponent::Clone(Component * source)
+  {
+    DemoComponent* demoComp = (DemoComponent*)source;
+    demo_type_ = demoComp->demo_type_;
+    entity_type_ = demoComp->entity_type_;
+    mapping_type_ = demoComp->mapping_type_;
+  }
+
   EntityType::Enum DemoComponent::GetEntityType()
   {
     return entity_type_;

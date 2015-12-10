@@ -44,6 +44,8 @@ namespace WickedSick
       virtual void PrepareBuffers(void* data = nullptr) final;
 
 
+
+
       virtual void AddTexture(Texture* comp) final;
       virtual Texture* GetTexture(const std::string& name) final;
       virtual void ClearTextures() final;

@@ -31,6 +31,8 @@ namespace WickedSick
     virtual void Deactivate() final;
     virtual void SetDebug(bool newDebug) final;
 
+    virtual void Clone(Component* source) = 0;
+
     virtual Component* GetSibling(ComponentType type) final;
 
     virtual GameObject* GetOwner() final;

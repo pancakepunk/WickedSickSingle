@@ -7,27 +7,34 @@ namespace WickedSick
   class ParticleEmitter;
   struct SystemDescription
   {
+    MetaDef;
     float lifetime;
-    Vector4 position;
+    Vector3 position;
     std::string name;
   };
 
   class ParticleSystem
   {
   public:
+    MetaDef;
     ParticleSystem(ParticleComponent* base = nullptr);
     ~ParticleSystem();
     ParticleComponent* GetComponent();
     void AddEmitter(ParticleEmitter* particle);
+    void RemoveEmitter(size_t index);
     void Initialize();
     bool IsDead();
-    SystemDescription ParticleSystem::GetSystemDescription();
-    void ParticleSystem::SetSystemDescription(const SystemDescription& newDesc);
+    SystemDescription GetDescription();
+    void SetSystemDescription(const SystemDescription& newDesc);
     void Update(float dt);
     void SetBase(ParticleComponent* newBase);
     void SetActive(bool active);
     bool GetActive();
 
+    void Save(const std::string& filename);
+    void Load(const std::string& filename);
+
+    ParticleEmitter* GetEmitter(size_t index);
     std::vector<ParticleEmitter*>& GetEmitters();
   private:
     std::vector<ParticleEmitter*> emitters_;

@@ -38,8 +38,26 @@
 #include <thread>
 #include <mutex>
 
+
+
+
+
 namespace WickedSick
 {
+  namespace ReflectionDirections
+  {
+    enum Enum
+    {
+      PosX,
+      NegX,
+      PosY,
+      NegY,
+      PosZ,
+      NegZ,
+      Count
+    };
+  };
+
   GraphicsAPI*  Graphics::graphicsAPI = nullptr;
   Graphics::Graphics() 
   : camera_(nullptr),
@@ -116,9 +134,13 @@ namespace WickedSick
     RenderTargetDesc desc;
     desc.size = window->GetWindowSize();
     
-    RenderTarget* newRenderTarget = graphicsAPI->MakeRenderTarget(desc);
-    
-    
+    RenderTarget* reflectionTarget = nullptr;
+    for(int i = 0; i < ReflectionDirections::Count; ++i)
+    {
+      reflectionTarget = graphicsAPI->MakeRenderTarget(desc);
+      reflectionTarget->Initialize();
+      render_targets_.push_back(reflectionTarget);
+    }
   }
 
   Model* generate_quad()
@@ -138,12 +160,12 @@ namespace WickedSick
 
 
 
-    quadVerts[0].position = Vector3(0.0f, 1.0f, 0.0f);
-    quadVerts[1].position = Vector3(1.0f, 0.0f, 0.0f);
-    quadVerts[2].position = Vector3(1.0f, 1.0f, 0.0f);
-    quadVerts[3].position = Vector3(0.0f, 1.0f, 0.0f);
-    quadVerts[4].position = Vector3(0.0f, 0.0f, 0.0f);
-    quadVerts[5].position = Vector3(1.0f, 0.0f, 0.0f);
+    quadVerts[0].position = Vector3(-0.5f, 0.5f, 0.0f);
+    quadVerts[1].position = Vector3(0.5f, 0.5f, 0.0f);
+    quadVerts[2].position = Vector3(0.5f, -0.5f, 0.0f);
+    quadVerts[3].position = Vector3(-0.5f, 0.5f, 0.0f);
+    quadVerts[4].position = Vector3(0.5f, -0.5f, 0.0f);
+    quadVerts[5].position = Vector3(-0.5f, -0.5f, 0.0f);
 
     quadVerts[0].normal = Vector3(0.0f, 0.0f, 1.0f);
     quadVerts[1].normal = Vector3(0.0f, 0.0f, 1.0f);
@@ -166,12 +188,12 @@ namespace WickedSick
     quadVerts[4].bitangent = Vector3(0.0f, 1.0f, 0.0f);
     quadVerts[5].bitangent = Vector3(0.0f, 1.0f, 0.0f);
 
-    quadVerts[0].tex = Vector2(0.0f, 0.0f); 
+    quadVerts[0].tex = Vector2(0.0f, 1.0f); 
     quadVerts[2].tex = Vector2(1.0f, 0.0f);
     quadVerts[1].tex = Vector2(1.0f, 1.0f);
     quadVerts[3].tex = Vector2(0.0f, 1.0f);
-    quadVerts[4].tex = Vector2(0.0f, 0.0f);
-    quadVerts[5].tex = Vector2(1.0f, 0.0f);
+    quadVerts[4].tex = Vector2(1.0f, 0.0f);
+    quadVerts[5].tex = Vector2(0.0f, 0.0f);
     quad->Set(quadVerts);
     quad->Initialize();
     return quad;
@@ -181,6 +203,8 @@ namespace WickedSick
   bool Graphics::Load()
   {
     //temporary init
+    LoadModel("skybox.bin");
+    LoadModel("bettersphere.bin");
     LoadModel("box.bin");
     LoadModel("bunny.bin");
     LoadModel("sphere.bin");
@@ -206,6 +230,16 @@ namespace WickedSick
     LoadTexture("diffuseroof.png");
     LoadTexture("basic-normal.png");
     LoadTexture("feather.png");
+
+
+    LoadTexture("-x.png");
+    LoadTexture("+x.png");
+    LoadTexture("-y.png");
+    LoadTexture("+y.png");
+    LoadTexture("-z.png");
+    LoadTexture("+z.png");
+
+
     LoadBumpMap("specularroof.png");
     
     AddShader("flat", &vertexShaderCallback);
@@ -215,6 +249,10 @@ namespace WickedSick
     AddShader("pixelphong", &vertexShaderCallback);
     AddShader("pixelblinn", &vertexShaderCallback);
     AddShader("particle", &ParticleShaderCallback);
+
+
+    AddShader("reflection", &reflectionShaderCallback);
+    AddShader("skybox", &skyboxShaderCallback);
 
     AddShader("reflectionplanar", &vertexShaderCallback);
     AddShader("reflectioncylindrical", &vertexShaderCallback);
@@ -315,9 +353,15 @@ namespace WickedSick
 
   void Graphics::Update(float dt)
   {
-    RecompileShaders();
-//    particle_manager_->Update(dt);
-    camera_->Orient(dt);
+    recompile_timer_ += dt;
+    if(recompile_timer_ > 2.0f)
+    {
+      RecompileShaders();
+      recompile_timer_ = 0.0f;
+    }
+    
+    particle_manager_->Update(dt);
+    camera_->Orient();
     Render();
 
     Input* input = (Input*) Engine::GetCore()->GetSystem(ST_Input);
@@ -661,6 +705,29 @@ namespace WickedSick
     return scene_constants_;
   }
 
+  RenderTarget* Graphics::GetRenderTarget(size_t index)
+  {
+    if(index < render_targets_.size())
+    {
+      return render_targets_[index];
+    }
+    return nullptr;
+  }
+
+  std::vector<RenderTarget*>& Graphics::GetRenderTargets()
+  {
+    return render_targets_;
+  }
+
+  void Graphics::DoPass()
+  {
+  }
+
+  void Graphics::SetBackBuffer(RenderTarget * backBuf)
+  {
+    back_buffer_ = backBuf;
+  }
+
   void Graphics::CleanScene()
   {
     reset_scene_constants_ = false;
@@ -676,20 +743,34 @@ namespace WickedSick
     mat_stack_->Push(camera_->GetViewMatrix());
     scene_constants_.fogNear = std::max(scene_constants_.fogNear, 0.5f);
     scene_constants_.fogFar = std::max(scene_constants_.fogFar, scene_constants_.fogNear + 1.0f);
-    
 
     Matrix4 modelToWorld;
     BeginScene();
     
     graphicsAPI->SetBlendType(BlendType::Off);
     graphicsAPI->SetDepthType(DepthType::Normal);
+
+    //7 passes because reflection is great
+
+
+
+    graphicsAPI->ClearRenderTargets();
+    graphicsAPI->FlushDepth();
+    graphicsAPI->ClearShaderResources();
+    graphicsAPI->AddRenderTarget(back_buffer_);
+    graphicsAPI->SetRenderTargets();
+
+
+
     LightingShaderParam paramList;
     int count = 0;
     Shader* debugShader = nullptr;
     for(auto& shaderIt : shaders_)
     {
       Shader* shader = shaderIt.val;
-      if(shaderIt.key != "lines" && shaderIt.key != "particle")
+        
+      if(shaderIt.key != "lines" && 
+          shaderIt.key != "particle")
       {
         Model* model = nullptr;
         for(auto& modelIt : shader->GetInstances())
@@ -699,11 +780,11 @@ namespace WickedSick
 
           for(auto& inst : modelIt.second)
           {
-            
+
             paramList.modelComp = inst;
             paramList.shader = shader;
 
-            shader->PrepareBuffers((void*)&paramList);
+            shader->PrepareBuffers((void*) &paramList);
 
             shader->Render(model->GetNumVerts());
           }
@@ -713,52 +794,69 @@ namespace WickedSick
       {
         debugShader = shader;
       }
+
+    }
+    
+
+
+
+    const bool drawParticles = true;
+    if(drawParticles)
+    {
+
+      //PARTICLES
+      auto& particleSystems = particle_manager_->GetSystems();
+      auto shaderIt = shaders_.find("particle");
+      Shader* particleShader = nullptr;
+      if(shaderIt != shaders_.end())
+      {
+        particleShader = (*shaderIt).val;
+      }
+      graphicsAPI->SetBlendType(BlendType::Additive);
+      graphicsAPI->SetDepthType(DepthType::Off);
+      ParticleShaderParam particleParam;
+      particleParam.shader = particleShader;
+      Model* particleModel;
+      for(auto& it : particleSystems)
+      {
+        for(auto& particleEmitter : it->GetEmitters())
+        {
+          particleModel = GetModel(particleEmitter->GetDescription().sourceModel);
+          if(particleModel)
+          {
+            particleModel->Render();
+            particleParam.emitter = particleEmitter;
+            auto& particles = particleEmitter->GetParticles();
+            for(auto& particleIndex : particleEmitter->GetAlive())
+            {
+              particleParam.particle = &particles[particleIndex];
+              particleShader->PrepareBuffers(&particleParam);
+              particleShader->Render(particleModel->GetNumVerts());
+            }
+          }
+        }
+
+      }
+      graphicsAPI->SetBlendType(BlendType::Off);
+      graphicsAPI->SetDepthType(DepthType::Normal);
     }
 
-    auto& particleSystems = particle_manager_->GetSystems();
-    auto shaderIt = shaders_.find("particle");
-    Shader* particleShader = nullptr;
-    if(shaderIt != shaders_.end())
-    {
-      particleShader = (*shaderIt).val;
-    }
-    graphicsAPI->SetBlendType(BlendType::Additive);
-    graphicsAPI->SetDepthType(DepthType::Off);
-    ParticleShaderParam particleParam;
-    particleParam.shader = particleShader;
-    Model* particleModel;
-    for(auto& it : particleSystems)
-    {
-      for(auto& particleEmitter : it->GetEmitters())
-      {
-        particleModel = GetModel(particleEmitter->GetEmitterDescription().sourceModel);
-        particleModel->Render();
-        particleParam.emitter = particleEmitter;
-        auto& particles = particleEmitter->GetParticles();
-        for(auto& particleIndex : particleEmitter->GetAlive())
-        {
-          particleParam.particle = &particles[particleIndex];
-          particleShader->PrepareBuffers(&particleParam);
-          particleShader->Render(particleModel->GetNumVerts());
-        }
-      }
-      
-    }
-    graphicsAPI->SetBlendType(BlendType::Off);
-    graphicsAPI->SetDepthType(DepthType::Normal);
-    if(debugShader)
-    {
-      for(auto& it : debug_models_)
-      {
-        if(it->GetDrawType() != DrawType::Default)
-        {
-          PrepareDebug(it);
-          RenderDebug();
-          debugShader->PrepareBuffers(it);
-          debugShader->Render(debug_lines_.size());
-        }
-      }
-    }
+
+
+
+    //if(debugShader)
+    //{
+    //  for(auto& it : debug_models_)
+    //  {
+    //    if(it->GetDrawType() != DrawType::Default)
+    //    {
+    //      PrepareDebug(it);
+    //      RenderDebug();
+    //      debugShader->PrepareBuffers(it);
+    //      debugShader->Render(debug_lines_.size());
+    //    }
+    //  }
+    //}
 
     if(draw_ui_)  
     {

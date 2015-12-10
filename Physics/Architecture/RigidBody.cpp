@@ -121,6 +121,26 @@ namespace WickedSick
     return base_; 
   }
 
+  float RigidBody::GetLinearDamping() const
+  {
+    return linear_damping_;
+  }
+
+  float RigidBody::GetAngularDamping() const
+  {
+    return angular_damping_;
+  }
+
+  void RigidBody::SetLinearDamping(float newDamp)
+  {
+    linear_damping_ = newDamp;
+  }
+
+  void RigidBody::SetAngularDamping(float newDamp)
+  {
+    angular_damping_ = newDamp;
+  }
+
   void RigidBody::SetVelocity(Vector3 vel)
   {
     previous_state_.Velocity = vel;

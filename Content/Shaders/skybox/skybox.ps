@@ -1,0 +1,116 @@
+
+
+
+#include "../common/lightingHelpers.fx"
+
+
+
+
+struct PixelInputType
+{
+  float4 positionClip : SV_POSITION;
+  float4 positionWorld : POSITION0;
+  float4 positionModel : POSITION1;
+  float4 normal : NORMAL;
+  float4 color : COLOR;
+  float2 tex : TEXCOORD;
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 posWS = input.positionWorld;
+  float3 fullView = cameraPos - posWS.xyz;
+  float  viewLen = length(fullView);
+
+  float3 view = fullView / viewLen;
+  
+  float fogScalar = calcFog(fogNear, fogFar, viewLen);
+  float4 globalAmbient = globalAmbientColor * globalAmbientIntensity;
+  float4 texColor = float4(0.0,0.0,0.0,1.0);
+  float4 emissive = emissiveColor * emissiveConstant;
+
+  float4 finalColor = float4(0.0,0.0,0.0,1.0);
+  float2 tex;
+  
+
+  float3 absNorm = abs(input.positionModel.xyz);
+
+  if((absNorm.x > absNorm.y) && (absNorm.x > absNorm.z))
+  {
+    tex = input.positionModel.zy;
+    tex -= 1;
+    tex /= 2.0;
+    tex.y *= -1;
+    if(input.positionModel.x < 0)
+    {
+      tex.x *= -1;
+      texColor = textureArray[1].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      
+      tex.x += 1;
+      texColor = textureArray[0].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absNorm.y > absNorm.x) && (absNorm.y > absNorm.z))
+  {
+    tex = input.positionModel.xz;
+    tex -= 1;
+    tex /= 2.0;
+    tex.x *= -1;
+    if(input.positionModel.y > 0)
+    {
+
+      tex.x += 0;
+      tex.y += 1;
+      //tex.y *= -1;
+      //tex.x *= -1;
+
+      texColor = textureArray[3].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      tex.x += 0;
+      tex.y += 0;
+      //tex *= -1;
+
+      //tex.x *= -1;
+      texColor = textureArray[2].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absNorm.z > absNorm.y) && (absNorm.z > absNorm.x))
+  {
+    tex = input.positionModel.xy;
+    tex -= 1;
+    tex /= 2.0;
+    tex.y *= -1;
+    if(input.positionModel.z < 0)
+    {
+      tex.x += 1;
+      texColor = textureArray[5].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+
+      tex.x *= -1;
+      texColor = textureArray[4].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else
+  {
+    texColor = float4(1,0,0,1);
+  }
+
+  finalColor += texColor;
+
+  return finalColor;
+
+  
+}

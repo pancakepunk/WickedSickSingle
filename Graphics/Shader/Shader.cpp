@@ -93,14 +93,6 @@ namespace WickedSick
   {
     if(comp)
     {
-      for(size_t i = 0; i < textures_.size(); ++i)
-      {
-        if(textures_[i]->GetName() == comp->GetName())
-        {
-          textures_[i] = comp;
-          return;
-        }
-      }
       textures_.push_back(comp);
     }
   }

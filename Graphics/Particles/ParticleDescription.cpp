@@ -15,12 +15,12 @@ namespace WickedSick
   {
   }
 
-  ParticleDescription::ParticleDescription(const Vector4 & pPosition,
-                                         const Vector4 & vVelocity,
-                                         const Vector4 & cColor,
-                                         const Vector4 & sScale,
-                                         float rRotation,
-                                         float lLifetime)
+  ParticleDescription::ParticleDescription(const Vector3 & pPosition,
+                                           const Vector3 & vVelocity,
+                                           const Vector4 & cColor,
+                                           const Vector3 & sScale,
+                                           float rRotation,
+                                           float lLifetime)
   : Position(pPosition),
     Velocity(vVelocity),
     Color(cColor),

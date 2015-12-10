@@ -10,6 +10,7 @@ namespace WickedSick
     return acos(left.GetNormalized().Dot(right.GetNormalized()));
   }
 
+
   Vector3 RotateAround(const Vector3 & axis, float amount, const Vector3 & vectorToRotate)
   {
     Matrix4 identity;

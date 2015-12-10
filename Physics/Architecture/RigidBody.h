@@ -11,7 +11,7 @@ namespace WickedSick
   class PhysicsComponent;
   class RigidBody
   {
-    public:
+  public:
     MetaDef;
     RigidBody( PhysicsComponent* base,
                                 bool isStatic = false,
@@ -52,22 +52,28 @@ namespace WickedSick
       //std::vector<Collider*> GetCollisionsWith(const std::string& collider);
     PhysicsComponent* GetBase();
 
-    private:
-      void stop_movement();
-      void reset_orientation();
-      void render_debug();
+    float GetLinearDamping() const;
+    float GetAngularDamping() const;
 
-      float                     gravity_scalar_;
-      float                     linear_damping_;
-      float                     angular_damping_;
-      MotionState               state_;
-      MotionState               previous_state_;
-      std::vector<Collider*>    colliders_; 
-      ConstraintList            constraints_;
-      bool                      static_;
-      PhysicsComponent*         base_;
+    void SetLinearDamping(float newDamp);
+    void SetAngularDamping(float newDamp);
 
-      bool draw_debug_;
+  private:
+    void stop_movement();
+    void reset_orientation();
+    void render_debug();
+
+    float                     gravity_scalar_;
+    float                     linear_damping_;
+    float                     angular_damping_;
+    MotionState               state_;
+    MotionState               previous_state_;
+    std::vector<Collider*>    colliders_;
+    ConstraintList            constraints_;
+    bool                      static_;
+    PhysicsComponent*         base_;
+
+    bool draw_debug_;
 
   };
 }                                                                

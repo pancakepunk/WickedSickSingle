@@ -85,6 +85,14 @@ namespace WickedSick
     void CleanScene();
     bool SceneDirty();
     SceneConstants& GetSceneConstants();
+
+    RenderTarget* GetRenderTarget(size_t index);
+    std::vector<RenderTarget*>& GetRenderTargets();
+
+    void DoPass();
+
+
+    void SetBackBuffer(RenderTarget* backBuf);
     
     static GraphicsAPI*            graphicsAPI;
   private:
@@ -105,6 +113,7 @@ namespace WickedSick
     HashMap<std::string, Shader*> shaders_;
     HashMap<std::string, Texture*> textures_;
 
+    RenderTarget* back_buffer_;
     std::vector<RenderTarget*> render_targets_;
 
 
@@ -124,6 +133,8 @@ namespace WickedSick
     GraphicsOptions*  options_;
 
     bool draw_ui_;
+
+    float recompile_timer_;
 
 
   };

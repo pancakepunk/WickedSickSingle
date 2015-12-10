@@ -12,9 +12,12 @@ namespace WickedSick
   public:
     CameraController();
     ~CameraController();
-    void Initialize();
-    void Update(float dt);
+    void Initialize() override;
+    void Update(float dt) override;
+    void Clone(Component* source) override;
+
   private:
+    Vector3 rotation_;
     Vector2i last_mouse_pos_;
   };
 }

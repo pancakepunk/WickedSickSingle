@@ -44,6 +44,16 @@ namespace WickedSick
     }
   }
 
+  void OrbitComponent::Clone(Component* source)
+  {
+    OrbitComponent* orbiter = (OrbitComponent*)source;
+    targeting_ = orbiter->targeting_;
+    force_ = orbiter->force_;
+    target_dist_ = orbiter->target_dist_;
+    current_dir_ = orbiter->current_dir_;
+    target_ = orbiter->target_;
+  }
+
 
   void OrbitComponent::Release()
   {

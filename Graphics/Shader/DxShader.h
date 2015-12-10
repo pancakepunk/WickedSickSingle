@@ -41,7 +41,7 @@ namespace WickedSick
     void Render(int count) override;
 
     void SetShaderDir(const std::string& dir);
-    
+
 
     void SetParameters(const std::vector<ParamPasser>& params);
 

@@ -28,6 +28,7 @@ namespace WickedSick
     Vector3 GetVelocity();
     void Initialize() override;
     void Update(float dt) override;
+    void Clone(Component* source) override;
     std::set<PhysicsComponent*> GetCollisions();
 
     void AddCollider(Collider* collider);

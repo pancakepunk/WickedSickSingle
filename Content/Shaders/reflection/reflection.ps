@@ -1,0 +1,193 @@
+
+
+
+#include "../common/lightingHelpers.fx"
+cbuffer reflectionInput
+{
+  float reflectionCoeff;
+  float refractionCoeff;
+  float2 refPad;
+};
+
+struct PixelInputType
+{
+  float4 positionClip : SV_POSITION;
+  float4 positionWorld : POSITION0;
+  float4 positionModel : POSITION1;
+  float4 normal : NORMAL;
+  float4 color : COLOR;
+  float2 tex : TEXCOORD;
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+
+float4 main(PixelInputType input) : SV_TARGET
+{
+  float4 posWS = input.positionWorld;
+  float3 fullView = cameraPos - posWS.xyz;
+  float  viewLen = length(fullView);
+
+  float3 view = fullView / viewLen;
+  
+  float fogScalar = calcFog(fogNear, fogFar, viewLen);
+  float4 globalAmbient = globalAmbientColor * globalAmbientIntensity;
+
+  float4 emissive = emissiveColor * emissiveConstant;
+  float4 reflectColor = float4(0.0,0.0,0.0,1.0);
+  float4 finalColor = float4(0.0,0.0,0.0,1.0);
+  float3 tempView = -view;
+
+  float angleViewNorm = acos(dot(view, input.normal.xyz));
+  float refractK = 1.0 / 1.33;
+  float nDotView = dot(input.normal.xyz, -view);
+  float refractScalar = -sqrt(1 - (refractK * refractK*(1 - (nDotView * nDotView))));
+  refractScalar -= (refractK * nDotView);
+  float3 refractVector =  refractScalar * input.normal.xyz;
+  refractVector -= (view * refractK);
+
+  float3 reflection = tempView - 2.0 * dot(input.normal.xyz, tempView) * input.normal.xyz;
+  float3 absReflect = abs(reflection);
+  //reflection = reflect(view, input.normal.xyz);
+  float2 tex;
+  float3 uvCompute = reflection / max(abs(reflection.x), max(abs(reflection.y), abs(reflection.z)));
+  
+  //bullshit how does this work pls
+  //uvCompute = abs(uvCompute);
+
+  if((absReflect.x > absReflect.y) && (absReflect.x > absReflect.z))
+  {
+    tex = uvCompute.zy;
+    tex.y *= -1;
+    if(reflection.x < 0)
+    {
+      tex = (tex + 1) / 2;
+      ///tex.x *= -1;
+      reflectColor = textureArray[0].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      tex = (tex + 1) / 2;
+      tex.x *= -1;
+      reflectColor = textureArray[1].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absReflect.y > absReflect.x) && (absReflect.y > absReflect.z))
+  {
+    tex = uvCompute.xz;
+    tex *= -1;
+    if(reflection.y < 0)
+    {
+
+      tex = (tex + 1) / 2;
+      //tex.y *= -1;
+      tex.x *= -1;
+
+      reflectColor = textureArray[2].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      //tex *= -1;
+      tex = (tex + 1) / 2;
+      tex.y *= -1;
+      //tex.x *= -1;
+      reflectColor = textureArray[3].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absReflect.z > absReflect.y) && (absReflect.z > absReflect.x))
+  {
+    tex = uvCompute.xy;
+    tex.y *= -1;
+    if(reflection.z < 0)
+    {
+      tex.x *= -1;
+      tex = (tex + 1) / 2;
+      reflectColor = textureArray[4].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+
+      tex = (tex + 1) / 2;
+      reflectColor = textureArray[5].SampleLevel(sampleType, tex, 0);
+    }
+  }
+
+  float3 absRefract = abs(refractVector);
+  //refractVector = reflect(view, input.normal.xyz);
+  float4 refractColor = float4(0,0,0,1);
+  float3 uvRefract = refractVector / max(abs(refractVector.x), max(abs(refractVector.y), abs(refractVector.z)));
+  
+  //bullshit how does this work pls
+  //uvRefract = abs(uvRefract);
+
+  if((absRefract.x > absRefract.y) && (absRefract.x > absRefract.z))
+  {
+    tex = uvRefract.zy;
+    tex.y *= -1;
+    if(refractVector.x < 0)
+    {
+      tex = (tex + 1) / 2;
+      ///tex.x *= -1;
+      refractColor = textureArray[0].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      tex = (tex + 1) / 2;
+      tex.x *= -1;
+      refractColor = textureArray[1].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absRefract.y > absRefract.x) && (absRefract.y > absRefract.z))
+  {
+    tex = uvRefract.xz;
+    tex *= -1;
+    if(refractVector.y < 0)
+    {
+
+      tex = (tex + 1) / 2;
+      //tex.y *= -1;
+      tex.x *= -1;
+
+      refractColor = textureArray[2].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+      //tex *= -1;
+      tex = (tex + 1) / 2;
+      tex.y *= -1;
+      //tex.x *= -1;
+      refractColor = textureArray[3].SampleLevel(sampleType, tex, 0);
+    }
+  }
+  else if ((absRefract.z > absRefract.y) && (absRefract.z > absRefract.x))
+  {
+    tex = uvRefract.xy;
+    tex.y *= -1;
+    if(refractVector.z < 0)
+    {
+      tex.x *= -1;
+      tex = (tex + 1) / 2;
+      refractColor = textureArray[4].SampleLevel(sampleType, tex, 0);
+    }
+    else
+    {
+
+      tex = (tex + 1) / 2;
+      refractColor = textureArray[5].SampleLevel(sampleType, tex, 0);
+    }
+  }
+
+
+  float reflectDotCoeff = max(0.0, min(1.0, 1 + nDotView));
+  int combine = reflectionCoeff * refractionCoeff;
+  finalColor =  reflectionCoeff * (1.0 - combine) * reflectColor +
+                refractionCoeff * (1.0 - combine) * refractColor + 
+                combine * (reflectDotCoeff * reflectColor + (1.0 - reflectDotCoeff) * refractColor);
+
+  return finalColor;
+
+  
+}

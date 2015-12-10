@@ -21,8 +21,10 @@ namespace WickedSick
 
     ~Transform();
 
-    void Initialize();
-    void Update(float dt);
+    void Initialize() override;
+    void Update(float dt) override;
+    void Clone(Component* source) override;
+
 
     Vector3 GetPosition();
     void SetPosition(const Vector3& pos);

@@ -43,6 +43,12 @@ namespace WickedSick
 
     void SetBlendType(BlendType::Enum type);
 
+    void SetRenderTargets() override;
+
+    void ClearShaderResources();
+
+    void FlushDepth() override;
+
     void SetDepthType(DepthType::Enum type);
     //void SetRenderTarget(Texture*)
     
@@ -59,15 +65,16 @@ namespace WickedSick
     Factory<DxTexture>        texture_factory_;
     Factory<DxRenderTarget>   render_target_factory_;
 
+    DxRenderTarget* back_buffer_target_;
     //grody dx stuff
-    ID3D11RenderTargetView* back_buffer_;
+    //ID3D11RenderTargetView* back_buffer_;
     //ID3D11DepthStencilState* depth_stencil_state_;
     DepthType::Enum depth_type_;
     ID3D11DepthStencilState* depth_stencil_states_[DepthType::Count];
 
     ID3D11Texture2D* depth_stencil_buffer_;
     ID3D11DepthStencilView* depth_stencil_view_;
-    ID3D11RenderTargetView* back_buffer_view_;
+    //ID3D11RenderTargetView* back_buffer_view_;
 
     ID3D11RasterizerState* rasterizer_state_;
 

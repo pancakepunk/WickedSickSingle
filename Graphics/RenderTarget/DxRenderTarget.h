@@ -8,7 +8,7 @@ namespace WickedSick
     public:
       DxRenderTarget(const RenderTargetDesc& desc);
       ~DxRenderTarget();
-      void Initialize() override;
+      void Initialize(void* const& texture = nullptr) override;
       void* GetTargetPointer() override;
     private:
       ID3D11RenderTargetView* render_target_;

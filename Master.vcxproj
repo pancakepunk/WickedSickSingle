@@ -81,7 +81,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib_json_d.lib;windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)anttweakbar\lib;$(ProjectDir)Lua\lib;F:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -111,8 +111,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib_json.lib;windowscodecs.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;anttweakbar.lib;lua53.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)anttweakbar\lib;$(ProjectDir)Lua\lib;F:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,6 +128,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -157,6 +159,8 @@
     <ClCompile Include="Graphics\Components\CameraController.cpp" />
     <ClCompile Include="Graphics\Components\LightComponent.cpp" />
     <ClCompile Include="Graphics\Components\ModelComponent.cpp" />
+    <ClCompile Include="Graphics\Components\ReflectComponent.cpp" />
+    <ClCompile Include="Graphics\Components\SkyboxComponent.cpp" />
     <ClCompile Include="Graphics\D3D\Device.cpp" />
     <ClCompile Include="Graphics\D3D\SwapChain.cpp" />
     <ClCompile Include="Graphics\D3D\WICTextureLoader.cpp" />
@@ -175,6 +179,7 @@
     <ClCompile Include="Graphics\Particles\Interpolator.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleComponent.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleDescription.cpp" />
+    <ClCompile Include="Graphics\Particles\ParticleEffectEditor.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleManager.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleEmitter.cpp" />
     <ClCompile Include="Graphics\Particles\ParticleSystem.cpp" />
@@ -213,6 +218,9 @@
     <ClCompile Include="Math\Vector\Vector4.cpp" />
     <ClCompile Include="Math\Vector\Vector4i.cpp" />
     <ClCompile Include="Meta\Constructor\Constructor.cpp" />
+    <ClInclude Include="Graphics\Components\ReflectComponent.h" />
+    <ClInclude Include="Graphics\Components\SkyboxComponent.h" />
+    <ClInclude Include="Graphics\Particles\ParticleEffectEditor.h" />
     <ClInclude Include="Graphics\RenderTarget\DxRenderTarget.h" />
     <ClInclude Include="Graphics\Components\DemoComponent.h" />
     <ClInclude Include="Graphics\D3D\WICTextureLoader.h" />
@@ -270,6 +278,7 @@
     <ClCompile Include="Physics\Resolution\PointConstraint.cpp" />
     <ClCompile Include="Physics\System\Physics.cpp" />
     <ClCompile Include="Graphics\RenderTarget\RenderTarget.cpp" />
+    <ClCompile Include="Serialization\Serializer.cpp" />
     <ClCompile Include="Testing\Tester.cpp" />
     <ClCompile Include="Testing\TestingPrecompiled.cpp" />
     <ClCompile Include="Testing\Tests\HashMapTests.cpp" />
@@ -428,6 +437,9 @@
     <ClInclude Include="Physics\Resolution\PointConstraint.h" />
     <ClInclude Include="Physics\System\Physics.h" />
     <ClInclude Include="Graphics\RenderTarget\RenderTarget.h" />
+    <ClInclude Include="Serialization\JsonCppIncludes.h" />
+    <ClInclude Include="Serialization\Serialization.h" />
+    <ClInclude Include="Serialization\Serializer.h" />
     <ClInclude Include="Testing\FailReasons.h" />
     <ClInclude Include="Testing\Tester.h" />
     <ClInclude Include="Testing\TestInfo.h" />

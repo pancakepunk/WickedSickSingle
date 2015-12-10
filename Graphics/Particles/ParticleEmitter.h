@@ -11,47 +11,78 @@ namespace WickedSick
   class Model;
   class Texture;
   class ParticleSystem;
+  namespace VelocityType
+  {
+    enum Enum
+    {
+      WorldSpace,
+      EmitterSpace,
+      Outward
+    };
+  }
   struct EmitterDescription
   {
+    MetaDef;
+    EmitterDescription();
     std::string sourceModel;
     std::string sourceTexture;
     Vector3 spawnPos;
-    size_t amountToSpawn;
+    int amountToSpawn;
+    int maxParticles;
     float frequency;// frequency of bursts
     float emitLength;//amount of time each burst lasts
+    Vector3 upVector;
     //note: in order to have a typical particle stream, 
     //      make sure that either frequency and emitLength are both low
     //      or set emitLength to zero and frequency to a low number
 
-    double lifetime;
+    float lifetime;
     bool lazy;
 
   };
-
+  //class Member;
   class ParticleEmitter
   {
   public:
-    ParticleEmitter(size_t particleCount,
-                    const EmitterDescription& description,
+    MetaDef;
+    ParticleEmitter(const EmitterDescription& description,
                     ParticleSystem* base = nullptr);
+    ParticleEmitter(const ParticleEmitter& rhs);
     void Update(float dt);
 
-    EmitterDescription& GetEmitterDescription();
+    EmitterDescription& GetDescription();
     bool IsDead();
     void Kill();
 
+    
+
+
     void Emit(size_t count);
 
-    void AddParticleState(const ParticleDescription& particle,
+    void AddParticleState(const ParticleDescription& particle = ParticleDescription(),
                           const ParticleDescription& variance = ParticleDescription());
+    void RemoveParticleState(size_t index);
     void ClearParticleStates();
+    
+    std::vector<ParticleDescription>& GetStates();
+    std::vector<ParticleDescription>& GetStateVariances();
+
+
     void RegisterAttribute(const std::string& memberName);
+    void RegisterAttribute(Reflection::Member* member);
+    void UnregisterAttribute(const std::string& memberName);
+    void UnregisterAttribute(Reflection::Member* member);
+
+    std::set<Reflection::Member*>& GetAttributes();
 
     ParticleSystem* GetSystem();
-
+    void SetBase(ParticleSystem* newBase);
     void Render();
     std::set<size_t>& GetAlive();
     std::vector<ParticleDescription>& GetParticles();
+
+
+
 //      static ParticleManager* basePtr;
   private:
       

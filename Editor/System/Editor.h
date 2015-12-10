@@ -3,17 +3,15 @@
 #include "Core/CoreInterface.h"
 
 #include "anttweakbar/include/AntTweakBar.h"
+#include "TweakBarCallbacks.h"
 namespace WickedSick
 {
 
-  struct CallbackInfo
-  {
-    Reflection::Metadata* baseData;
-    std::vector<Reflection::Member*> members;
-  };
+  
 
   class GameObject;
   class Event;
+  class ParticleEditor;
   class Editor : public System
   {
     public:
@@ -40,18 +38,26 @@ namespace WickedSick
       void Deselect();
       CallbackInfo& GetCBInfo();
       int GetSelectedId();
+      ParticleEditor* GetParticleEditor();
+
     private:
       void add_members(CallbackInfo& cbInfo, Reflection::Member* base);
       void draw_ui();
       std::set<int> selected_;
       int selected_id_;
       int archetype_index_;
+
+      bool show_particle_editor_;
+      ParticleEditor* particle_editor_;
+
+
+
       TwType archetype_enum_;
       std::string archetype_to_clone_;
       std::vector<TwEnumVal> archetypeEnums;
 
-      std::vector<CallbackInfo*> per_object_info_;
-
+      std::list<CallbackInfo> per_object_info_;
+      
       CallbackInfo cb_info_;
 
       TwBar* object_ui_;

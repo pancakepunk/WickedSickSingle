@@ -41,13 +41,22 @@ namespace WickedSick
     Cleanup();
   }
 
-  void DxTexture::Initialize()
+  void DxTexture::Initialize(void*const& tex2d)
   {
     Graphics* gSys = (Graphics*)Engine::GetCore()->GetSystem(ST_Graphics);
     DirectX* dx = (DirectX*)gSys->graphicsAPI;
-    if(tex_.empty())
+    auto& device = dx->GetSwapChain()->device->D3DDevice;
+    if(tex2d)//we already have the texture2d pointer
+    {
+      texture_2d_ = (ID3D11Texture2D*)tex2d;
+      DxError(device->CreateShaderResourceView(texture_2d_,
+                                               nullptr,
+                                               &texture_view_));
+    }
+    else if(!source_.empty())//
     {
       std::wstring wStrBecauseWhyNot(source_.begin(), source_.end());
+      
       ID3D11Resource* pleasegivemethesize;
       DxError(::DirectX::CreateWICTextureFromFile(dx->GetSwapChain()->device->D3DDevice,
                                                   wStrBecauseWhyNot.c_str(),
@@ -88,7 +97,7 @@ namespace WickedSick
         desc.Usage = D3D11_USAGE_DEFAULT;
       }
       
-      auto& device = dx->GetSwapChain()->device->D3DDevice;
+      
       DxError(device->CreateTexture2D(&desc,
                                       NULL,
                                       &texture_2d_));

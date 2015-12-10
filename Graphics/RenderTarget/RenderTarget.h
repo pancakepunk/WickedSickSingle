@@ -16,7 +16,7 @@ namespace WickedSick
     public:
       RenderTarget(const RenderTargetDesc& desc);
       virtual ~RenderTarget();
-      virtual void Initialize() = 0;
+      virtual void Initialize(void* const& texture = nullptr) = 0;
       virtual void* GetTargetPointer() = 0;
       Texture* GetTexture();
     protected:

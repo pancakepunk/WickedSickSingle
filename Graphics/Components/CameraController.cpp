@@ -29,6 +29,8 @@ namespace WickedSick
     InputHandler* handler = input->GetHandler();
     bool dirty = false;
     CameraComponent* cameraComp = (CameraComponent*) GetSibling(CT_CameraComponent);
+    Transform* tr = (Transform*) GetSibling(CT_Transform);
+    //cameraComp->SetRotation(tr->GetRotation());
     if (handler->Check("Rotate"))
     {
       if(last_mouse_pos_ == Vector2i(-1, -1))
@@ -38,24 +40,12 @@ namespace WickedSick
       else if(handler->GetMousePos() != last_mouse_pos_)
       {
         Vector2i curPos = handler->GetMousePos();
-        Vector2 amountToRotate = (curPos - last_mouse_pos_).to_f() * dt;
-        Vector3 lookAt = cameraComp->GetLookAt();
-        Transform* tr = (Transform*)GetSibling(CT_Transform);
-        Vector3 view = lookAt - tr->GetPosition();
-        view.Normalize();
-        
-        
-        view = RotateAround(Vector3(0, 1, 0), amountToRotate.x, view);
-        view.Normalize();
-        Vector3 right = Vector3(0,1,0).Cross(view);
-        right.Normalize();
-        view = RotateAround(right, amountToRotate.y, view);
+        Vector2 amountToRotate = (curPos - last_mouse_pos_).to_f();
 
-        
-        lookAt = (tr->GetPosition() + view);
+        rotation_.x -= amountToRotate.y;
+        rotation_.y -= amountToRotate.x;
 
-
-        cameraComp->SetLookAt(lookAt);
+        cameraComp->SetRotation(rotation_);
         last_mouse_pos_ = Vector2i(-1, -1);
         dirty = true;
       }
@@ -69,27 +59,17 @@ namespace WickedSick
       else if (handler->GetMousePos() != last_mouse_pos_)
       {
         Vector2i curPos = handler->GetMousePos();
-        Vector2 amountToMove = (curPos - last_mouse_pos_).to_f() * dt;
+        Vector2i amountToMove = (curPos - last_mouse_pos_);
         
-        Vector3 lookAt = cameraComp->GetLookAt();
-        Transform* tr = (Transform*)GetSibling(CT_Transform);
+        //Transform* tr = (Transform*)GetSibling(CT_Transform);
 
-        Vector3 view = lookAt - tr->GetPosition();
-        view.Normalize();
-        Vector3 right = Vector3(0.0f,1.0f,0.0f).Cross(view);
-        right.Normalize();
-        Vector3 up = view.Cross(right);
-        up.Normalize();
+        
 
-        Vector3 pos = tr->GetPosition();
-        amountToMove *= 5.0f;
-        pos += right * -amountToMove.x;
-        pos += up * amountToMove.y;
+        //Vector3 pos = tr->GetPosition();
+        //amountToMove *= 5.0f;
 
-        lookAt += right * -amountToMove.x;
-        lookAt += up * amountToMove.y;
-        tr->SetPosition(pos);
-        cameraComp->SetLookAt(lookAt);
+        //tr->SetPosition(pos);
+        cameraComp->Move(Vector3i(amountToMove, 0));
 
         last_mouse_pos_ = Vector2i(-1, -1);
         dirty = true;
@@ -97,35 +77,21 @@ namespace WickedSick
     }
     else if (handler->Check("ZoomIn"))
     {
-      Vector3 lookAt = cameraComp->GetLookAt();
-      Transform* tr = (Transform*)GetSibling(CT_Transform);
-      Vector3 view = lookAt - tr->GetPosition();
-      view.Normalize();
-      view *= dt;
-      tr->SetPosition(tr->GetPosition() += view );
-      cameraComp->SetLookAt(lookAt += view );
+
+
+      //tr->SetPosition(tr->GetPosition() += view );
+      cameraComp->Move(Vector3i(0, 0, 1));
       dirty = true;
     }
     else if (handler->Check("ZoomOut"))
     {
-      Vector3 lookAt = cameraComp->GetLookAt();
-      Transform* tr = (Transform*)GetSibling(CT_Transform);
-      Vector3 view = lookAt - tr->GetPosition();
-      view.Normalize();
-      view *= dt;
-      tr->SetPosition(tr->GetPosition() -= view);
-      cameraComp->SetLookAt(lookAt -= view);
+      cameraComp->Move(Vector3i(0, 0, -1));
       dirty = true;
     }
     else if (handler->GetScrollPos())
     {
-      Vector3 lookAt = cameraComp->GetLookAt();
-      Transform* tr = (Transform*)GetSibling(CT_Transform);
-      Vector3 view = lookAt - tr->GetPosition();
-      view.Normalize();
-      view *= dt;
-      tr->SetPosition(tr->GetPosition() + view * (float)handler->GetScrollPos());
-      cameraComp->SetLookAt(lookAt + view * (float)handler->GetScrollPos());
+
+      cameraComp->Move(Vector3i(0, 0, handler->GetScrollPos()));
       dirty = true;
     }
     else
@@ -139,6 +105,13 @@ namespace WickedSick
       gSys->GetCamera()->Dirty();
     }
     
+  }
+
+  void CameraController::Clone(Component * source)
+  {
+    CameraController* camCont = (CameraController*)source;
+    rotation_ = camCont->rotation_;
+    last_mouse_pos_ = camCont->last_mouse_pos_;
   }
 
 }

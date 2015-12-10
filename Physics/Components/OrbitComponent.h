@@ -17,6 +17,8 @@ namespace WickedSick
 
     void Initialize() override;
     void Update(float dt) override;
+    void Clone(Component* source) override;
+
     void Release();
     void Target();
   private:

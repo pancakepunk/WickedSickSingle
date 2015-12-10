@@ -38,9 +38,11 @@ namespace WickedSick
     ~ModelComponent();
     void Destroy();
     void SetModel(const std::string& model);
-    void Initialize();
+    void Initialize() override;
     void SetShader(const std::string& shader);
-    void Update(float dt);
+    void Update(float dt) override;
+    void Clone(Component* source) override;
+
     Model* GetBase();
     std::string GetShader();
     void SetDrawType(DrawType::Enum type);
@@ -57,7 +59,6 @@ namespace WickedSick
 
     Material material_props_;
     DrawType::Enum draw_type_;
-    const std::string name_;
     std::string model_;
     std::string shader_;
     std::string texture_;

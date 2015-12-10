@@ -65,6 +65,8 @@ namespace WickedSick
     LightInfo(const LightInfo& rhs);
     LightInfo(LightInfo&& rhs);
 
+    LightInfo& operator=(const LightInfo& rhs);
+
 
     Point point;
     Spot spot;
@@ -83,6 +85,8 @@ namespace WickedSick
 
     void Initialize() override;
     void Update(float dt) override;
+    void Clone(Component* source) override;
+
     LightInfo& GetInfo();
     size_t GetSize();
 

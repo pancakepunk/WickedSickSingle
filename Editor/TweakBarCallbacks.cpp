@@ -59,6 +59,14 @@ namespace WickedSick
     {
       return (char*) object->GetComponent(CT_DemoComponent);
     }
+    else if(type == FindType(ReflectComponent))
+    {
+      return (char*) object->GetComponent(CT_ReflectComponent);
+    }
+    //else if(type == FindType(ParticleComponent))
+    //{
+    //  return (char*) object->GetComponent(CT_ParticleComponent);
+    //}
     return nullptr;
   }
 
@@ -165,6 +173,13 @@ namespace WickedSick
   }
 
 
+
+
+
+
+
+
+
   void TW_CALL CopyCdStringToClient(char **destinationClientStringPtr, const char *sourceString)
   {
     if(*destinationClientStringPtr)
@@ -206,6 +221,13 @@ namespace WickedSick
     }
 
     return TW_TYPE_UNDEF;
+  }
+
+  void TW_CALL ToggleParticleEditor(void * clientData)
+  {
+    bool& showParticleEditor = *(bool*)clientData;
+    showParticleEditor = !showParticleEditor;
+    //donesies lolololol
   }
 
   void TW_CALL NewObjectCallback(void * clientData)
@@ -252,4 +274,318 @@ namespace WickedSick
    
     }
   }
+
+  void TW_CALL TweakBarAddSystem(void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleComponent* comp = (ParticleComponent*)editor->GetCurrentSelected()->GetComponent(CT_ParticleComponent);
+    Graphics* graphics = (Graphics*) Engine::GetCore()->GetSystem(ST_Graphics);
+    ParticleManager* manager = graphics->GetParticleManager();
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleSystem* newSystem = manager->MakeParticleSystem();
+
+    newSystem->Initialize();
+    comp->AddParticleSystem(newSystem);
+  }
+
+  void TW_CALL TweakBarRemoveSystem(void * clientData)
+  {
+    int systemToRemove = *(int*) clientData;
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleComponent* comp = (ParticleComponent*) editor->GetCurrentSelected()->GetComponent(CT_ParticleComponent);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    comp->RemoveParticleSystem(systemToRemove);
+
+    pEdit->SelectSystem(0);
+  }
+
+  void TW_CALL TweakBarAddEmitter(void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    Graphics* graphics = (Graphics*) Engine::GetCore()->GetSystem(ST_Graphics);
+    ParticleManager* manager = graphics->GetParticleManager();
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleEmitter* newEmitter = manager->MakeParticleEmitter();
+    pEdit->GetSelectedSystem()->AddEmitter(newEmitter);
+  }
+
+  void TW_CALL TweakBarRemoveEmitter(void * clientData)
+  {
+    int emitterToRemove = *(int*) clientData;
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleSystem* sys = pEdit->GetSelectedSystem();
+    if(sys->GetEmitters().size())
+    {
+      sys->RemoveEmitter(emitterToRemove);
+      pEdit->SelectEmitter(0);
+    }
+  }
+
+  void TW_CALL TweakBarAddState(void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleEmitter* emitter = pEdit->GetSelectedEmitter();
+    emitter->AddParticleState();
+  }
+
+  void TW_CALL TweakBarRemoveState(void * clientData)
+  {
+    int stateToRemove = *(int*)clientData;
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleEmitter* emitter = pEdit->GetSelectedEmitter();
+    if(emitter->GetStates().size())
+    {
+      emitter->RemoveParticleState(stateToRemove);
+      pEdit->SelectEmitterState(0);
+    }
+  }
+
+  void TW_CALL TweakBarParticleSetRegistered(const void *value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleEmitter* emitter = pEdit->GetSelectedEmitter();
+    auto& attributes = emitter->GetAttributes();
+    Reflection::Metadata* particleMeta = FindType(ParticleDescription);
+    auto& members = particleMeta->GetMembers();
+
+    std::string status = *(const std::string*)value;
+    int iterator = 0;
+    int index = *(int*) clientData;
+    for(auto& it : members)
+    {
+      if(iterator != index)
+      {
+        ++iterator;
+      }
+      else//found the member it's looking for
+      {
+        if(status == "Registered")
+        {
+          emitter->RegisterAttribute(&it.second);
+        }
+        else if(status == "Unregistered")
+        {
+          emitter->UnregisterAttribute(&it.second);
+        }
+        else
+        {
+          //eh u fucked up
+        }
+
+        break;
+      }
+    }
+
+  }
+
+  void TW_CALL TweakBarParticleGetRegistered(void *value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    ParticleEmitter* emitter = pEdit->GetSelectedEmitter();
+    auto& attributes = emitter->GetAttributes();
+    Reflection::Metadata* particleMeta = FindType(ParticleDescription);
+    auto& members = particleMeta->GetMembers();
+
+    std::string status = "Unregistered";
+    int iterator = 0;
+    int index = *(int*)clientData;
+    for(auto& it : members)
+    {
+      if(iterator != index)
+      {
+        ++iterator;
+      }
+      else//found the member it's looking for
+      {
+        for(auto& ait : attributes)//if it's in the attributes it's registered
+        {
+          if(ait == &it.second)
+          {
+            status = "Registered";
+            break;
+          }
+        }
+        break;
+      }
+    }
+
+    TwCopyStdStringToLibrary(*(std::string*) value, status);
+
+  }
+
+  void TW_CALL TweakBarParticleSetState(const void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    pEdit->SelectEmitterState(*(int*)value);
+  }
+
+  void TW_CALL TweakBarParticleGetState(void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    *(int*)value = pEdit->GetEmitterStateIndex();
+  }
+
+  void TW_CALL TweakBarParticleSetEmitter(const void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    pEdit->SelectEmitter(*(int*) value);
+  }
+
+  void TW_CALL TweakBarParticleGetEmitter(void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    *(int*) value = pEdit->GetEmitterIndex();
+  }
+
+  void TW_CALL TweakBarParticleSetSystem(const void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    pEdit->SelectSystem(*(int*) value);
+  }
+
+  void TW_CALL TweakBarParticleGetSystem(void * value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    *(int*) value = pEdit->GetSystemIndex();
+  }
+
+
+
+  //particles callbacks
+
+  void TW_CALL TweakBarParticleSet(const void *value, void * clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleCallbackInfo* info = (ParticleCallbackInfo*) clientData;
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    char* toSet = nullptr;
+    switch(info->type)
+    {
+      case ParticleUiType::Emitter:
+        toSet = (char*)pEdit->GetSelectedEmitter();
+        break;
+      case ParticleUiType::System:
+        toSet = (char*) pEdit->GetSelectedSystem();
+        break;
+      case ParticleUiType::State:
+        toSet = (char*) pEdit->GetSelectedEmitterState();
+        break;
+      case ParticleUiType::Variance:
+        toSet = (char*) pEdit->GetSelectedEmitterVariance();
+        break;
+    }
+    for(auto& it : info->members)
+    {
+      toSet += it->GetOffset();
+    }
+
+    memcpy(toSet, value, info->members.back()->GetType()->GetSize());
+
+  }
+
+  void TW_CALL TweakBarParticleGet(void* value, void* clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleCallbackInfo* info = (ParticleCallbackInfo*) clientData;
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    char* toGet = nullptr;
+    switch(info->type)
+    {
+      case ParticleUiType::Emitter:
+        toGet = (char*) pEdit->GetSelectedEmitter();
+        break;
+      case ParticleUiType::System:
+        toGet = (char*) pEdit->GetSelectedSystem();
+        break;
+      case ParticleUiType::State:
+        toGet = (char*) pEdit->GetSelectedEmitterState();
+        break;
+      case ParticleUiType::Variance:
+        toGet = (char*) pEdit->GetSelectedEmitterVariance();
+        break;
+    }
+    for(auto& it : info->members)
+    {
+      toGet += it->GetOffset();
+    }
+
+    memcpy(value, toGet, info->members.back()->GetType()->GetSize());
+  }
+
+
+  void TW_CALL TweakBarParticleSetString(const void* value, void* clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleCallbackInfo* info = (ParticleCallbackInfo*) clientData;
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    char* toSet = nullptr;
+    switch(info->type)
+    {
+      case ParticleUiType::Emitter:
+        toSet = (char*) pEdit->GetSelectedEmitter();
+        break;
+      case ParticleUiType::System:
+        toSet = (char*) pEdit->GetSelectedSystem();
+        break;
+      case ParticleUiType::State:
+        toSet = (char*) pEdit->GetSelectedEmitterState();
+        break;
+      case ParticleUiType::Variance:
+        toSet = (char*) pEdit->GetSelectedEmitterVariance();
+        break;
+    }
+    for(auto& it : info->members)
+    {
+      toSet += it->GetOffset();
+    }
+    *(std::string*)toSet = *(std::string*)value;
+
+  }
+
+  void TW_CALL TweakBarParticleGetString(void* value, void* clientData)
+  {
+    Editor* editor = (Editor*) Engine::GetCore()->GetSystem(ST_Editor);
+    ParticleCallbackInfo* info = (ParticleCallbackInfo*) clientData;
+    ParticleEditor* pEdit = editor->GetParticleEditor();
+    char* toGet = nullptr;
+    switch(info->type)
+    {
+      case ParticleUiType::Emitter:
+        toGet = (char*) pEdit->GetSelectedEmitter();
+        break;
+      case ParticleUiType::System:
+        toGet = (char*) pEdit->GetSelectedSystem();
+        break;
+      case ParticleUiType::State:
+        toGet = (char*) pEdit->GetSelectedEmitterState();
+        break;
+      case ParticleUiType::Variance:
+        toGet = (char*) pEdit->GetSelectedEmitterVariance();
+        break;
+    }
+    for(auto& it : info->members)
+    {
+      toGet += it->GetOffset();
+    }
+    TwCopyStdStringToLibrary(*(std::string*) value, *(std::string*)toGet);
+    //memcpy(value, toGet, info->members.back()->GetType()->GetSize());
+    //PhysicsComponent* physics = (PhysicsComponent*) obj->GetComponent(CT_PhysicsComponent);
+    //if(physics)
+    //{
+    //  physics->Reset();
+    //}
+  }
+
+
 }

@@ -78,6 +78,19 @@ namespace WickedSick
     swap_chain_->device->D3DContext->OMSetBlendState(blend_states_[blend_type_], blend, 0xFFFFFFFF);
   }
 
+  void DirectX::SetRenderTargets()
+  {
+    std::vector<ID3D11RenderTargetView*> targets;
+    for(auto& it : current_render_targets_)
+    {
+      targets.push_back((ID3D11RenderTargetView*)it->GetTargetPointer());
+    }
+    if(targets.size())
+    {
+      swap_chain_->device->D3DContext->OMSetRenderTargets(targets.size(), &targets[0], depth_stencil_view_);
+    }
+  }
+
   void DirectX::SetDepthType(DepthType::Enum type)
   {
     depth_type_ = type;
@@ -93,26 +106,18 @@ namespace WickedSick
     options_ = options;
     swap_chain_ = new SwapChain();
     swap_chain_->Initialize(window->GetWindowHandle(), window->GetWindowSize());
+    RenderTargetDesc targetDesc = {window->GetWindowSize()};
     
-
-    /////////////////////////
-    //all backbuffer stuff?
+    back_buffer_target_ = (DxRenderTarget*)MakeRenderTarget(targetDesc);
+    
+    Graphics* graphics = (Graphics*)Engine::GetCore()->GetSystem(ST_Graphics);
+    
     ID3D11Texture2D* backBufferPtr;
-    // Get the pointer to the back buffer.
     swap_chain_->D3DSwapChain->GetBuffer(0,
                                          __uuidof(ID3D11Texture2D),
                                          (LPVOID*) &backBufferPtr);
-    // Create the render target view with the back buffer pointer.
-    DxError(swap_chain_->device->D3DDevice->CreateRenderTargetView(backBufferPtr,
-                                                                   nullptr,
-                                                                   &back_buffer_view_));
-    
-    // Release pointer to the back buffer as we no longer need it.
-    backBufferPtr->Release();
-    backBufferPtr = 0;
-    // so make a generic backbuffer class probs?
-    //////////////////////////
-
+    back_buffer_target_->Initialize(backBufferPtr);
+    graphics->SetBackBuffer(back_buffer_target_);
 
     D3D11_BLEND_DESC additive;
     SecureZeroMemory(&additive, sizeof(D3D11_BLEND_DESC));
@@ -253,18 +258,19 @@ namespace WickedSick
     DxError(swap_chain_->device->D3DDevice->CreateDepthStencilView( depth_stencil_buffer_, 
                                                                     &depthStencilViewDesc, 
                                                                     &depth_stencil_view_));
-    swap_chain_->device->D3DContext->OMSetRenderTargets(1, 
-                                                        &back_buffer_view_, 
-                                                        depth_stencil_view_);
+    ID3D11RenderTargetView* backBuffer = (ID3D11RenderTargetView*)back_buffer_target_->GetTargetPointer();
+    //swap_chain_->device->D3DContext->OMSetRenderTargets(1, 
+    //                                                    &backBuffer,
+    //                                                    depth_stencil_view_);
 
     D3D11_RASTERIZER_DESC rasterDesc;
     rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_NONE;
+    rasterDesc.CullMode = D3D11_CULL_BACK;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
     rasterDesc.DepthClipEnable = true;
     rasterDesc.FillMode = D3D11_FILL_SOLID;
-    rasterDesc.FrontCounterClockwise = true;
+    rasterDesc.FrontCounterClockwise = false;
     rasterDesc.MultisampleEnable = false;
     rasterDesc.ScissorEnable = false;
     rasterDesc.SlopeScaledDepthBias = 0.0f;
@@ -303,8 +309,7 @@ namespace WickedSick
   {
     delete swap_chain_;
 
-    //BAAAD
-    back_buffer_->Release();
+    delete back_buffer_target_;
   }
 
   void DirectX::PrepareDebug(Buffer*& debugBuffer, Vertex* verts, size_t size)
@@ -395,13 +400,38 @@ namespace WickedSick
       // Present as fast as possible.
       swap_chain_->D3DSwapChain->Present(0, 0);
     }
+    //unbind any still-bound render targets
+    swap_chain_->device->D3DContext->OMSetRenderTargets(0, nullptr, nullptr);
   }
    
   void DirectX::clear_buffers()
   {
     // Clear the back buffer.
-    swap_chain_->device->D3DContext->ClearRenderTargetView(back_buffer_view_, &(options_->ClearColor[0]));
+    swap_chain_->device->D3DContext->ClearRenderTargetView((ID3D11RenderTargetView*) back_buffer_target_->GetTargetPointer(), &(options_->ClearColor[0]));
     
+    Graphics* graphics = (Graphics*) Engine::GetCore()->GetSystem(ST_Graphics);
+    auto& allTargets = graphics->GetRenderTargets();
+
+    for(int i = 0; i < allTargets.size(); ++i)
+    {
+      swap_chain_->device->D3DContext->ClearRenderTargetView((ID3D11RenderTargetView*) allTargets[i]->GetTargetPointer(), &(options_->ClearColor[0]));
+    }
+    FlushDepth();
+    
+  }
+
+  void DirectX::ClearShaderResources()
+  {
+    DirectX* dx = reinterpret_cast<DirectX*>(Graphics::graphicsAPI);
+    SwapChain* swapChain = dx->GetSwapChain();
+    void* clearResources[6] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    swapChain->device->D3DContext->PSSetShaderResources(0, 6, (ID3D11ShaderResourceView**) &clearResources);
+    swapChain->device->D3DContext->VSSetShaderResources(0, 6, (ID3D11ShaderResourceView**) &clearResources);
+
+  }
+
+  void DirectX::FlushDepth()
+  {
     // Clear the depth buffer.
     swap_chain_->device->D3DContext->ClearDepthStencilView(depth_stencil_view_, D3D11_CLEAR_DEPTH, 1.0f, 0);
   }

@@ -49,9 +49,9 @@ namespace WickedSick
 
     // Create a texture sampler state description.
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.MipLODBias = 0.0f;
     samplerDesc.MaxAnisotropy = 1;
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
@@ -183,10 +183,10 @@ namespace WickedSick
       {
         vertex_shader_->Release();
       }
-      DxError(device->CreateVertexShader( vertexShaderBuffer->GetBufferPointer(), 
-                                          vertexShaderBuffer->GetBufferSize(), 
-                                          NULL, 
-                                          &vertex_shader_));
+      DxError(device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(),
+                                         vertexShaderBuffer->GetBufferSize(),
+                                         NULL,
+                                         &vertex_shader_));
       InitLayout(vertexShaderBuffer);
       vertexShaderBuffer->Release();
       ConsolePrint("Vertex shader " + name_ + " compiled successfully.\n");

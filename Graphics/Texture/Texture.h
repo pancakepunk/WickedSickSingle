@@ -20,7 +20,7 @@ namespace WickedSick
     virtual ~Texture();
     virtual void* GetResourcePointer() = 0;
     virtual void* GetTexturePointer() = 0;
-    virtual void Initialize() = 0;
+    virtual void Initialize(void* const& texture = nullptr) = 0;
     virtual std::string GetName() final;
     virtual std::string GetSource() final;
   protected:

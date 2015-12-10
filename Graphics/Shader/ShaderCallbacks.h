@@ -15,6 +15,7 @@ namespace WickedSick
     ModelComponent* modelComp;
     Shader* shader;
   };
+
   struct ParticleShaderParam
   {
     ParticleDescription* particle;
@@ -23,6 +24,8 @@ namespace WickedSick
   };
   void ParticleShaderCallback(Graphics* gSys, void* data, std::vector<ParamPasser>& params);
   void LineShaderCallback(Graphics* gSys, void* data, std::vector<ParamPasser>& params);
+  void reflectionShaderCallback(Graphics* gSys, void* data, std::vector<ParamPasser>& params);
+  void skyboxShaderCallback(Graphics* gSys, void* data, std::vector<ParamPasser>& params);
   void vertexShaderCallback(Graphics* gSys, void* comp, std::vector<ParamPasser>& params);
   void WireframeShaderCallback(Graphics* gSys, ModelComponent* comp, std::vector<ParamPasser>& params);
 }

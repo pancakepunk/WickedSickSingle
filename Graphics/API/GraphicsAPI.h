@@ -61,6 +61,15 @@ namespace WickedSick
                                  const TextureDesc& desc) = 0;
     virtual Shader* MakeShader(const std::string& name, Shader::ShaderCallback callback) = 0;
     virtual RenderTarget* MakeRenderTarget(const RenderTargetDesc& desc) = 0;
+
+    virtual void AddRenderTarget(RenderTarget* target) final;
+    virtual void SetRenderTargets() = 0;
+    virtual void ClearRenderTargets() final;
+
+    virtual void ClearShaderResources() = 0;
+
+    virtual void FlushDepth() = 0;
+
     
     virtual void SetBlendType(BlendType::Enum type) = 0;
     virtual void SetDepthType(DepthType::Enum type) = 0;
@@ -68,7 +77,7 @@ namespace WickedSick
   protected:
     GraphicsOptions* options_;
 
-    std::vector<RenderTarget*> render_targets_;
+    std::vector<RenderTarget*> current_render_targets_;
 
     virtual void clear_buffers() = 0;
     APIType::Enum api_;

@@ -39,7 +39,8 @@ namespace WickedSick
       Component* toReturn = nullptr;
       if(archetype != archetype_map_.end())
       {
-        toReturn = manager_.New((*archetype).val.GetBase());
+        toReturn = MakeBlank();
+        toReturn->Clone((Component*)&(*archetype).val.GetBase());
         toReturn->SetOwner(owner);
       }
       

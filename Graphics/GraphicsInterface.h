@@ -12,6 +12,8 @@
 #include "Graphics/Components/ModelComponent.h"
 #include "Graphics/Components/LightComponent.h"
 #include "Graphics/Components/DemoComponent.h"
+#include "Graphics/Components/SkyboxComponent.h"
+#include "Graphics/Components/ReflectComponent.h"
 #include "Graphics/General/GraphicsUtility.h"
 
 #include "Graphics/D3D/Device.h"
@@ -25,4 +27,5 @@
 #include "Graphics/Particles/ParticleDescription.h"
 #include "Graphics/Particles/ParticleEnums.h"
 #include "Graphics/Particles/ParticleManager.h"
+#include "Graphics/Particles/ParticleEffectEditor.h"
 
